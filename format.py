@@ -59,12 +59,13 @@ with open(sys.argv[1]) as infile:
                 entry['J2'] = entry.pop('T2')
 
             entry['AU'] = ' and '.join(entry['AU'])
+            entry['ID'] = entry['A1'] + entry['PY']
 
             entries.append(entry)
 
 for entry in sorted(entries, key=lambda entry: int(entry['PY'])):
     if entry['TY'] == 'JOUR':
-        print("@article{%s%s," % (entry['A1'], entry['PY']))
+        print("@article{%s," % entry['ID'])
 
         for name, key in [
             ('author',  'AU'),
@@ -82,7 +83,7 @@ for entry in sorted(entries, key=lambda entry: int(entry['PY'])):
         print("}")
 
     if entry['TY'] == 'BOOK':
-        print("@book{%s%s," % (entry['A1'], entry['PY']))
+        print("@book{%s," % entry['ID'])
 
         for name, key in [
             ('author',    'AU'),
