@@ -26,6 +26,8 @@ with open(sys.argv[1]) as infile:
 
             if len(parts) == 2:
                 key, value = parts
+            else:
+                continue
 
             if key == 'AU':
                 if 'AU' in entry:
