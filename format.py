@@ -29,6 +29,13 @@ with open(sys.argv[1]) as infile:
             else:
                 continue
 
+            if key == 'TY':
+                if value == 'JOUR':
+                    entry['TY'] = 'article'
+
+                elif value == 'BOOK':
+                    entry['TY'] = 'book'
+
             if key == 'AU':
                 if 'AU' in entry:
                     entry['AU'].append(value)
@@ -50,7 +57,6 @@ with open(sys.argv[1]) as infile:
                 'SP',
                 'T2',
                 'TI',
-                'TY',
                 'VL',
                 ]:
 
@@ -65,47 +71,35 @@ with open(sys.argv[1]) as infile:
 
             entries.append(entry)
 
+types = dict(
+    article = [
+        ('author',  'AU'),
+        ('title',   'TI'),
+        ('journal', 'J2'),
+        ('volume',  'VL'),
+        ('pages',   'SP'),
+        ('year',    'PY'),
+        ('doi',     'DO'),
+        ],
+    book = [
+        ('author',    'AU'),
+        ('title',     'TI'),
+        ('edition',   'ET'),
+        ('publisher', 'PB'),
+        ('address',   'CY'),
+        ('year',      'PY'),
+        ('doi',       'DO'),
+        ],
+    )
+
 for entry in sorted(entries, key=lambda entry: int(entry['PY'])):
-    if entry['TY'] == 'JOUR':
-        fields = [
-            ('author',  'AU'),
-            ('title',   'TI'),
-            ('journal', 'J2'),
-            ('volume',  'VL'),
-            ('pages',   'SP'),
-            ('year',    'PY'),
-            ('doi',     'DO'),
-            ]
+    length = max(len(name) for name, key in types[entry['TY']] if key in entry)
+    form = "%%%ds = {%%s}," % length
 
-        length = max(len(name) for name, key in fields if key in entry)
-        form = "%%%ds = {%%s}," % length
+    print("@%s{%s," % (entry['TY'], entry['ID']))
 
-        print("@article{%s," % entry['ID'])
+    for name, key in types[entry['TY']]:
+        if key in entry:
+            print(form % (name, entry[key]))
 
-        for name, key in fields:
-            if key in entry:
-                print(form % (name, entry[key]))
-
-        print("}")
-
-    if entry['TY'] == 'BOOK':
-        fields = [
-            ('author',    'AU'),
-            ('title',     'TI'),
-            ('edition',   'ET'),
-            ('publisher', 'PB'),
-            ('address',   'CY'),
-            ('year',      'PY'),
-            ('doi',       'DO'),
-            ]
-
-        length = max(len(name) for name, key in fields if key in entry)
-        form = "%%%ds = {%%s}," % length
-
-        print("@book{%s," % entry['ID'])
-
-        for name, key in fields:
-            if key in entry:
-                print(form % (name, entry[key]))
-
-        print("}")
+    print("}")
