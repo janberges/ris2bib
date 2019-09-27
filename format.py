@@ -67,9 +67,7 @@ with open(sys.argv[1]) as infile:
 
 for entry in sorted(entries, key=lambda entry: int(entry['PY'])):
     if entry['TY'] == 'JOUR':
-        print("@article{%s," % entry['ID'])
-
-        for name, key in [
+        fields = [
             ('author',  'AU'),
             ('title',   'TI'),
             ('journal', 'J2'),
@@ -77,17 +75,21 @@ for entry in sorted(entries, key=lambda entry: int(entry['PY'])):
             ('pages',   'SP'),
             ('year',    'PY'),
             ('doi',     'DO'),
-            ]:
+            ]
 
+        length = max(len(name) for name, key in fields if key in entry)
+        form = "%%%ds = {%%s}," % length
+
+        print("@article{%s," % entry['ID'])
+
+        for name, key in fields:
             if key in entry:
-                print("%7s = {%s}," % (name, entry[key]))
+                print(form % (name, entry[key]))
 
         print("}")
 
     if entry['TY'] == 'BOOK':
-        print("@book{%s," % entry['ID'])
-
-        for name, key in [
+        fields = [
             ('author',    'AU'),
             ('title',     'TI'),
             ('edition',   'ET'),
@@ -95,9 +97,15 @@ for entry in sorted(entries, key=lambda entry: int(entry['PY'])):
             ('address',   'CY'),
             ('year',      'PY'),
             ('doi',       'DO'),
-            ]:
+            ]
 
+        length = max(len(name) for name, key in fields if key in entry)
+        form = "%%%ds = {%%s}," % length
+
+        print("@book{%s," % entry['ID'])
+
+        for name, key in fields:
             if key in entry:
-                print("%9s = {%s}," % (name, entry[key]))
+                print(form % (name, entry[key]))
 
         print("}")
