@@ -92,7 +92,10 @@ types = dict(
         ],
     )
 
-for entry in sorted(entries, key=lambda entry: int(entry['PY'])):
+entries = sorted(entries, key=lambda entry:
+    (int(entry['PY']), entry['AU'], entry['TI']))
+
+for entry in entries:
     length = max(len(name) for name, key in types[entry['TY']] if key in entry)
     form = "%%%ds = {%%s}," % length
 
