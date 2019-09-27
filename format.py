@@ -93,7 +93,19 @@ types = dict(
     )
 
 entries = sorted(entries, key=lambda entry:
-    (int(entry['PY']), entry['AU'], entry['TI']))
+    (int(entry['PY']), entry['ID'], entry['TI']))
+
+labels = 'abcdefghijklmnopqrstuvwxyz'
+
+n = 0
+while n < len(entries):
+    n0 = n
+    while n < len(entries) and entries[n]['ID'] == entries[n0]['ID']:
+        n += 1
+
+    if len(entries[n0:n]) > 1:
+        for label, entry in zip(labels, entries[n0:n]):
+            entry['ID'] += label
 
 for entry in entries:
     length = max(len(name) for name, key in types[entry['TY']] if key in entry)
