@@ -36,6 +36,9 @@ with open(sys.argv[1]) as infile:
                 elif value == 'BOOK':
                     entry['TY'] = 'book'
 
+                elif value == 'ELEC':
+                    entry['TY'] = 'electronic'
+
             if key == 'AU':
                 if 'AU' in entry:
                     entry['AU'].append(value)
@@ -57,7 +60,9 @@ with open(sys.argv[1]) as infile:
                 'SP',
                 'T2',
                 'TI',
+                'UR',
                 'VL',
+                'Y2',
                 ]:
 
                 entry[key] = value
@@ -89,6 +94,12 @@ types = dict(
         ('address',   'CY'),
         ('year',      'PY'),
         ('doi',       'DO'),
+        ],
+    electronic = [
+        ('author',  'AU'),
+        ('title',   'TI'),
+        ('url',     'UR'),
+        ('urldate', 'Y2'),
         ],
     )
 
