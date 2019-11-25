@@ -8,22 +8,27 @@ if len(sys.argv) != 2:
     quit()
 
 def simplify(name):
-    for a, b in zip('áäéíóöúüñß', list('aaeioouun') + ['ss']):
+    for a, b in zip('áäéíóöøúüñçç’–—ß', list("aaeiooouunc'--") + ['ss']):
         name = name.replace(a, b)
 
     return name
 
 def protect(name):
-    for a, b in zip('áäéíóöúüñß', [
+    for a, b in zip('áäéíóöøúüñç’–—ß', [
         r"\'a",
         r'\"a',
         r"\'e",
         r"\'i",
         r"\'o",
         r'\"o',
+        r'\o',
         r"\'u",
         r'\"u',
         r'\~n',
+        r'\c{c}',
+        "'",
+        '--',
+        '---',
         r'\ss',
         ]):
 
@@ -83,7 +88,7 @@ with open(sys.argv[1]) as infile:
                 'Y2',
                 ]:
 
-                entry[key] = value
+                entry[key] = protect(value)
 
         if entry:
             if 'J2' not in entry and 'T2' in entry:
