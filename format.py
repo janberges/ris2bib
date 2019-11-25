@@ -8,7 +8,25 @@ if len(sys.argv) != 2:
     quit()
 
 def simplify(name):
-    for a, b in zip('áäéíóöúÜ', 'aaeioouu'):
+    for a, b in zip('áäéíóöúüñß', list('aaeioouun') + ['ss']):
+        name = name.replace(a, b)
+
+    return name
+
+def protect(name):
+    for a, b in zip('áäéíóöúüñß', [
+        r"\'a",
+        r'\"a',
+        r"\'e",
+        r"\'i",
+        r"\'o",
+        r'\"o',
+        r"\'u",
+        r'\"u',
+        r'\~n',
+        r'\ss',
+        ]):
+
         name = name.replace(a, b)
 
     return name
@@ -41,10 +59,10 @@ with open(sys.argv[1]) as infile:
 
             if key == 'AU':
                 if 'AU' in entry:
-                    entry['AU'].append(value)
+                    entry['AU'].append(protect(value))
 
                 else:
-                    entry['AU'] = [value]
+                    entry['AU'] = [protect(value)]
                     entry['A1'] = value.split(',', 1)[0]
                     entry['A1'] = simplify(entry['A1'])
                     entry['A1'] = ''.join([c for c in entry['A1']
