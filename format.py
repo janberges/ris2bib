@@ -94,6 +94,11 @@ with open(sys.argv[1]) as infile:
             if 'J2' not in entry and 'T2' in entry:
                 entry['J2'] = entry.pop('T2')
 
+            if 'J2' in entry and entry['J2'].startswith('arXiv'):
+                entry['TY'] = 'unpublished'
+                entry['AP'] = 'arXiv'
+                entry['AR'] = entry.pop('J2')[6:]
+
             entry['AU'] = ' and '.join(entry['AU'])
             entry['ID'] = entry['A1'] + entry['PY']
 
@@ -108,6 +113,13 @@ types = dict(
         ('pages',   'SP'),
         ('year',    'PY'),
         ('doi',     'DO'),
+        ],
+    unpublished = [
+        ('author',        'AU'),
+        ('title',         'TI'),
+        ('year',          'PY'),
+        ('archiveprefix', 'AP'),
+        ('eprint',        'AR'),
         ],
     book = [
         ('author',    'AU'),
