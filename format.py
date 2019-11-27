@@ -21,7 +21,7 @@ def protect(name):
         r"\'i",
         r"\'o",
         r'\"o',
-        r'\o',
+        r'{\o}',
         r"\'u",
         r'\"u',
         r'\~n',
@@ -29,7 +29,7 @@ def protect(name):
         "'",
         '--',
         '---',
-        r'\ss',
+        r'{\ss}',
         ]):
 
         name = name.replace(a, b)
