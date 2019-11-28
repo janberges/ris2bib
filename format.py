@@ -102,7 +102,7 @@ with open(sys.argv[1]) as infile:
             if 'J2' in entry and entry['J2'].startswith('arXiv'):
                 entry['TY'] = 'unpublished'
                 entry['AP'] = 'arXiv'
-                entry['AR'] = entry.pop('J2')[6:]
+                entry['AR'] = entry.pop('J2').split()[0].split(':')[1]
 
             for key in 'AU', 'A2':
                 if key in entry:
