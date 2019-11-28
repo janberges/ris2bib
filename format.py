@@ -62,16 +62,21 @@ with open(sys.argv[1]) as infile:
                 elif value == 'ELEC':
                     entry['TY'] = 'electronic'
 
-            if key == 'AU':
-                if 'AU' in entry:
-                    entry['AU'].append(protect(value))
+                elif value == 'CHAP':
+                    entry['TY'] = 'incollection'
+
+            if key in {'AU', 'A2'}:
+                if key in entry:
+                    entry[key].append(protect(value))
 
                 else:
-                    entry['AU'] = [protect(value)]
-                    entry['A1'] = value.split(',', 1)[0]
-                    entry['A1'] = simplify(entry['A1'])
-                    entry['A1'] = ''.join([c for c in entry['A1']
-                        if 65 <= ord(c) <= 90 or 97 <= ord(c) <= 122])
+                    entry[key] = [protect(value)]
+
+                    if key == 'AU':
+                        entry['A1'] = value.split(',', 1)[0]
+                        entry['A1'] = simplify(entry['A1'])
+                        entry['A1'] = ''.join([c for c in entry['A1']
+                            if 65 <= ord(c) <= 90 or 97 <= ord(c) <= 122])
 
             elif key in [
                 'CY',
@@ -99,7 +104,10 @@ with open(sys.argv[1]) as infile:
                 entry['AP'] = 'arXiv'
                 entry['AR'] = entry.pop('J2')[6:]
 
-            entry['AU'] = ' and '.join(entry['AU'])
+            for key in 'AU', 'A2':
+                if key in entry:
+                    entry[key] = ' and '.join(entry[key])
+
             entry['ID'] = entry['A1'] + entry['PY']
 
             entries.append(entry)
@@ -136,6 +144,17 @@ types = dict(
         ('url',     'UR'),
         ('urldate', 'Y2'),
         ],
+    incollection = [
+        ('author',    'AU'),
+        ('title',     'TI'),
+        ('editor',    'A2'),
+        ('booktitle', 'J2'),
+        ('edition',   'ET'),
+        ('publisher', 'PB'),
+        ('address',   'CY'),
+        ('year',      'PY'),
+        ('doi',       'DO'),
+        ]
     )
 
 entries = sorted(entries, key=lambda entry:
