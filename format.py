@@ -157,8 +157,22 @@ types = dict(
         ]
     )
 
-entries = sorted(entries, key=lambda entry:
-    (int(entry['PY']), entry['ID'], entry['TI']))
+def parseInt(string):
+    number = ''.join(c for c in string if 48 <= ord(c) <= 57)
+
+    if number:
+        return int(number)
+    else:
+        return 0
+
+entries = sorted(entries, key=lambda entry: (
+    parseInt(entry['PY']),
+    entry['ID'],
+    entry.get('J2', ''),
+    parseInt(entry.get('VL', '')),
+    parseInt(entry.get('SP', '')),
+    entry.get('TI', ''),
+    ))
 
 labels = 'abcdefghijklmnopqrstuvwxyz'
 
