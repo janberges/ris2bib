@@ -83,6 +83,7 @@ with open(sys.argv[1]) as infile:
                 'DO',
                 'ET',
                 'J2',
+                'L1',
                 'PB',
                 'PY',
                 'SP',
@@ -104,6 +105,10 @@ with open(sys.argv[1]) as infile:
                 entry['AP'] = 'arXiv'
                 entry['AR'] = entry.pop('J2').split()[0].split(':')[1]
 
+            elif 'L1' in entry and 'arxiv' in entry['L1'].lower():
+                entry['AP'] = 'arXiv'
+                entry['AR'] = entry.pop('L1').split('/')[-1].replace('.pdf', '')
+
             for key in 'AU', 'A2':
                 if key in entry:
                     entry[key] = ' and '.join(entry[key])
@@ -123,11 +128,9 @@ types = dict(
         ('doi',     'DO'),
         ],
     unpublished = [
-        ('author',        'AU'),
-        ('title',         'TI'),
-        ('year',          'PY'),
-        ('archiveprefix', 'AP'),
-        ('eprint',        'AR'),
+        ('author', 'AU'),
+        ('title',  'TI'),
+        ('year',   'PY'),
         ],
     book = [
         ('author',    'AU'),
@@ -156,6 +159,12 @@ types = dict(
         ('doi',       'DO'),
         ]
     )
+
+for value in types.values():
+    value.extend([
+        ('archiveprefix', 'AP'),
+        ('eprint',        'AR'),
+        ])
 
 def parseInt(string):
     number = ''.join(c for c in string if 48 <= ord(c) <= 57)
