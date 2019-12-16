@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import re
 import sys
 
 if len(sys.argv) != 2:
@@ -13,28 +14,96 @@ def simplify(name):
 
     return name
 
-def protect(name):
-    for a, b in zip('áäéíóöøúüñç’–—ß', [
-        r"\'a",
-        r'\"a',
-        r"\'e",
-        r"\'i",
-        r"\'o",
-        r'\"o',
-        r'{\o}',
-        r"\'u",
-        r'\"u',
-        r'\~n',
-        r'\c{c}',
-        "'",
-        '--',
-        '---',
-        r'{\ss}',
-        ]):
+def protect(s, capitalization=False):
+    if capitalization:
+        groups = []
 
-        name = name.replace(a, b)
+        while '{' in s:
+            for group in re.findall(r'\{[^{]*?\}', s):
+                s = s.replace(group, '<#%d>' % len(groups))
+                groups.append(group)
 
-    return name
+        separator = ' \\-\u2013\u2014/'
+
+        tokens = re.findall('[{0}]+|[^{0}]+'.format(separator), s)
+
+        for n, token in enumerate(tokens):
+            if re.search('[A-Z]', token):
+                if len(re.findall('[A-Z0-9]', token)) > 1:
+                    tokens[n] = '{%s}' % token
+
+        s = ''.join(tokens)
+
+        for n, group in reversed(list(enumerate(groups))):
+            s = s.replace('<#%d>' % n, group)
+
+    s = re.sub('([\u2070-\u207f]+)', r'\\textsuperscript{\1}', s)
+    s = re.sub('([\u2080-\u209f]+)', r'\\textsubscript{\1}', s)
+
+    s = re.sub('\u2080', r'', s)
+
+    s = s.replace('²', '2')
+    s = s.replace('³', '3')
+    s = s.replace('¹', '1')
+    s = s.replace('ß', r'{\ss}')
+    s = s.replace('á', r"\'a")
+    s = s.replace('ä', r'\"a')
+    s = s.replace('ç', r'\c{c}')
+    s = s.replace('é', r"\'e")
+    s = s.replace('í', r"\'i")
+    s = s.replace('ñ', r'\~n')
+    s = s.replace('ó', r"\'o")
+    s = s.replace('ö', r'\"o')
+    s = s.replace('ø', r'{\o}')
+    s = s.replace('ú', r"\'u")
+    s = s.replace('ü', r'\"u')
+    s = s.replace('–', '--')
+    s = s.replace('—', '---')
+    s = s.replace('’', "'")
+    s = s.replace('⁰', '0')
+    s = s.replace('ⁱ', 'i')
+    s = s.replace('⁴', '4')
+    s = s.replace('⁵', '5')
+    s = s.replace('⁶', '6')
+    s = s.replace('⁷', '7')
+    s = s.replace('⁸', '8')
+    s = s.replace('⁹', '9')
+    s = s.replace('⁺', '+')
+    s = s.replace('⁻', '$-$')
+    s = s.replace('⁼', '=')
+    s = s.replace('⁽', '(')
+    s = s.replace('⁾', ')')
+    s = s.replace('ⁿ', 'n')
+    s = s.replace('₀', '0')
+    s = s.replace('₁', '1')
+    s = s.replace('₂', '2')
+    s = s.replace('₃', '3')
+    s = s.replace('₄', '4')
+    s = s.replace('₅', '5')
+    s = s.replace('₆', '6')
+    s = s.replace('₇', '7')
+    s = s.replace('₈', '8')
+    s = s.replace('₉', '9')
+    s = s.replace('₊', '+')
+    s = s.replace('₋', '$-$')
+    s = s.replace('₌', '=')
+    s = s.replace('₍', '(')
+    s = s.replace('₎', ')')
+    s = s.replace('ₐ', 'a')
+    s = s.replace('ₑ', 'e')
+    s = s.replace('ₒ', 'o')
+    s = s.replace('ₓ', 'x')
+    s = s.replace('ₔ', 'e')
+    s = s.replace('ₕ', 'h')
+    s = s.replace('ₖ', 'k')
+    s = s.replace('ₗ', 'l')
+    s = s.replace('ₘ', 'm')
+    s = s.replace('ₙ', 'n')
+    s = s.replace('ₚ', 'p')
+    s = s.replace('ₛ', 's')
+    s = s.replace('ₜ', 't')
+
+    return s
 
 entries = []
 
@@ -94,7 +163,7 @@ with open(sys.argv[1]) as infile:
                 'Y2',
                 ]:
 
-                entry[key] = protect(value)
+                entry[key] = protect(value, capitalization=key == 'TI')
 
         if entry:
             if 'J2' not in entry and 'T2' in entry:
