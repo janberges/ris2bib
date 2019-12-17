@@ -107,7 +107,7 @@ def protect(s, capitalization=False):
                 s = s.replace(group, '<#%d>' % len(groups))
                 groups.append(group)
 
-        separator = ' \u2009\\-\u2013\u2014.:/'
+        separator = ' \u2009\\-\u2013\u2014.:,;()\[\]/'
 
         tokens = re.findall('[{0}]+|[^{0}]+'.format(separator), s)
 
