@@ -1,6 +1,31 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+r"""
+Overview
+________
+
+This scripts converts bibliographies from RIS to BibTeX format, preserving only
+relevant information. The RIS input file can be generated, for example, using
+Zotero's "Quick Copy" feature (Edit > Preferences > Export). It may contain
+certain Unicode characters, e.g., subscript numbers. The BibTeX output file
+ought to contain ASCII characters only. Uppercase letters in acronyms, chemical
+formulas, and common physicist's names are protected by automatic insertion of
+curly braces.
+
+Usage
+_____
+
+format.py <input file> <output file>
+          [--sub=<format string>] [--super=<format string>]
+
+The optional arguments --sub and --super specify the markup used to convert
+sub- and superscript Unicode sequences in titles to LaTeX code. The default
+values are --sub='\textsubscript{X}' and --super='\textsuperscript{X}', where X
+is the placeholder for the replaced sequence. Possible alternative values are
+--sub='$_{X}$' and --super='$^{X}$'.
+"""
+
 import re
 import sys
 
