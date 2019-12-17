@@ -110,20 +110,29 @@ def protect(s, capitalization=False):
     s = re.sub('([\u2080-\u209f])\.([\u2080-\u209f])', r'\1ₔ\2', s)
 
     if capitalization:
+        print('%s...' % s[:50])
+
         groups = []
 
         while '{' in s:
             for group in re.findall(r'\{[^{]*?\}', s):
-                s = s.replace(group, '<#%d>' % len(groups))
                 groups.append(group)
 
-        for group in re.findall(r'\$.+?\$', s):
-            s = s.replace(group, '<#%d>' % len(groups))
+                replacement = '<#%d>' % len(groups)
+                s = s.replace(group, replacement)
 
+                print('Group: %s = %s' % (replacement, group))
+
+        for group in re.findall(r'\$.+?\$', s):
             if re.search('[A-Z]', group):
                 group = '{%s}' % group
 
             groups.append(group)
+
+            replacement = '<#%d>' % len(groups)
+            s = s.replace(group, replacement)
+
+            print('Math: %s = %s' % (replacement, group))
 
         separator = ' \u2009\\-\u2013\u2014.:,;()\[\]/'
 
@@ -133,9 +142,11 @@ def protect(s, capitalization=False):
             if protected(token, tokens[n - 1] if n > 0 else None):
                 tokens[n] = '{%s}' % token
 
+                print('Protect: %s' % token)
+
         s = ''.join(tokens)
 
-        for n, group in reversed(list(enumerate(groups))):
+        for n, group in reversed(list(enumerate(groups, 1))):
             s = s.replace('<#%d>' % n, group)
 
     s = re.sub('([\u2070-\u207f]+)', r'\\textsuperscript{\1}', s)
@@ -409,6 +420,8 @@ while n < len(entries):
     if len(entries[n0:n]) > 1:
         for label, entry in zip(labels, entries[n0:n]):
             entry['ID'] += label
+
+            print('Sublabel: %s' % entry['ID'])
 
 with open(sys.argv[2], 'w') as outfile:
     for entry in entries:
