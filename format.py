@@ -60,9 +60,14 @@ elements = [
     ]
 
 def protected(token, previous=None):
-    upper = re.search('[A-Z]', token)
+    upper = re.search('[B-Z]', token)
 
     if upper:
+        # e.g. "K":
+
+        if len(token) == 1:
+            return True
+
         # e.g. "NaCl", "W90":
 
         if len(re.findall('[A-Z0-9]', token)) > 1:
