@@ -14,23 +14,76 @@ def simplify(name):
 
     return name
 
+names = [
+    'Born',
+    'Coulomb',
+    'Eliashberg',
+    'Fermi',
+    'Fröhlich',
+    'Gauss',
+    'Haeckel',
+    'Hubbard',
+    'Jahn',
+    'Kohn',
+    'Migdal',
+    'Mott',
+    'Oppenheimer',
+    'Peierls',
+    'Raman',
+    'Stark',
+    'Teller',
+    'Van',
+    'Waals',
+    'Wannier',
+    'Wick',
+    'Wigner',
+    ]
+
+def protected(token, previous=None):
+    upper = re.search('[A-Z]', token)
+
+    if upper:
+        # e.g. "NaCl", "W90":
+
+        if len(re.findall('[A-Z0-9]', token)) > 1:
+            return True
+
+        # e.g. "eV":
+
+        lower = re.search('[a-z]')
+
+        if lower and lower.start() < upper.start():
+            return True
+
+        # e.g. "Gaussian"
+
+        for name in names:
+            if token.beginswith(name):
+                return True
+
+        # Start of further title:
+
+        if previous and re.search('.', previous):
+                return True
+
+    return False
+
 def protect(s, capitalization=False):
     if capitalization:
         groups = []
 
-        while '{' in s:
-            for group in re.findall(r'\{[^{]*?\}', s):
+        while '{' in s or '$' in s:
+            for group in re.findall(r'\{[^{]*?\}|\$.+?\$', s):
                 s = s.replace(group, '<#%d>' % len(groups))
                 groups.append(group)
 
-        separator = ' \\-\u2013\u2014/'
+        separator = ' \\-\u2013\u2014.:/'
 
         tokens = re.findall('[{0}]+|[^{0}]+'.format(separator), s)
 
         for n, token in enumerate(tokens):
-            if re.search('[A-Z]', token):
-                if len(re.findall('[A-Z0-9]', token)) > 1:
-                    tokens[n] = '{%s}' % token
+            if protected(token, tokens[n - 1] if n > 0 else None):
+                tokens[n] = '{%s}' % token
 
         s = ''.join(tokens)
 
