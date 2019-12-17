@@ -29,37 +29,33 @@ is the placeholder for the replaced sequence. Possible alternative values are
 import re
 import sys
 
-files = [argument for argument in sys.argv[1:] if not argument.startswith('-')]
+# Read input (.ris) and output (.bib) file given as command-line arguments:
 
-if len(files) != 2:
-    print("""Usage:
+try:
+    ris, bib = [argument for argument in sys.argv[1:]
+        if not argument.startswith('-')]
+except:
+    raise SystemExit("Wrong arguments. Check source code for documentation.")
 
-format.py <input file> <output file>
-          [--sub=<format string>]
-          [--super=<format string>]
-""")
-    raise SystemExit
+# Read optional command-line arguments:
 
-superscript = r'\textsuperscript{X}'
-subscript = r'\textsubscript{X}'
+sup = r'\textsuperscript{X}'
+sub = r'\textsubscript{X}'
 
 for argument in sys.argv[1:]:
-    if argument.startswith('-'):
-        if argument.startswith('--sub='):
-            subscript = argument.split('=', 1)[1]
+    if argument.startswith('-') and '=' in argument:
+        key, value = argument.split('=')
 
-            print('Subscript format: %s' % subscript)
+        if key == '--sub':
+            print('Subscript format: %s' % value)
+            sub = value.replace('\\', '\\\\').replace('X', '\\1')
 
-        elif argument.startswith('--super='):
-            superscript = argument.split('=', 1)[1]
+        elif key == '--super':
+            print('Superscript format: %s' % value)
+            sup = value.replace('\\', '\\\\').replace('X', '\\1')
 
-            print('Superscript format: %s' % superscript)
-
-        else:
-            print('Unknown argument: %s' % argument)
-
-superscript = superscript.replace('\\', '\\\\').replace('X', '\\1')
-subscript   =   subscript.replace('\\', '\\\\').replace('X', '\\1')
+    else:
+        print('Unknown argument: %s' % argument)
 
 def simplify(name):
     for a, b in zip('áäéíóöøúüñçç’–—ß', list("aaeiooouunc'--") + ['ss']):
@@ -202,8 +198,8 @@ def protect(s, capitalization=False):
         for n, group in reversed(list(enumerate(groups, 1))):
             s = s.replace('<#%d>' % n, group)
 
-    s = re.sub('([\u2070-\u207f]+)', superscript, s)
-    s = re.sub('([\u2080-\u209f]+)', subscript, s)
+    s = re.sub('([\u2070-\u207f]+)', sup, s)
+    s = re.sub('([\u2080-\u209f]+)', sub, s)
 
     s = s.replace('\u2009', '\,')
     s = s.replace('\u2013', '--')
@@ -321,7 +317,7 @@ def protect(s, capitalization=False):
 
 entries = []
 
-with open(sys.argv[1]) as infile:
+with open(ris) as infile:
     text = infile.read()
 
     for block in text.split('\n\n'):
@@ -480,7 +476,7 @@ while n < len(entries):
 
             print('Sublabel: %s' % entry['ID'])
 
-with open(sys.argv[2], 'w') as outfile:
+with open(bib, 'w') as outfile:
     for entry in entries:
         length = max(len(name) for name, key in types[entry['TY']] if key in entry)
         form = "%%%ds = {%%s},\n" % length
