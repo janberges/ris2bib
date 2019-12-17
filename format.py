@@ -4,9 +4,37 @@
 import re
 import sys
 
-if len(sys.argv) != 3:
-    print("Usage: format.py <input file> <output file>")
-    quit()
+files = [argument for argument in sys.argv[1:] if not argument.startswith('-')]
+
+if len(files) != 2:
+    print("""Usage:
+
+format.py <input file> <output file>
+          [--sub=<format string>]
+          [--super=<format string>]
+""")
+    raise SystemExit
+
+superscript = r'\textsuperscript{X}'
+subscript = r'\textsubscript{X}'
+
+for argument in sys.argv[1:]:
+    if argument.startswith('-'):
+        if argument.startswith('--sub='):
+            subscript = argument.split('=', 1)[1]
+
+            print('Subscript format: %s' % subscript)
+
+        elif argument.startswith('--super='):
+            superscript = argument.split('=', 1)[1]
+
+            print('Superscript format: %s' % superscript)
+
+        else:
+            print('Unknown argument: %s' % argument)
+
+superscript = superscript.replace('\\', '\\\\').replace('X', '\\1')
+subscript   =   subscript.replace('\\', '\\\\').replace('X', '\\1')
 
 def simplify(name):
     for a, b in zip('áäéíóöøúüñçç’–—ß', list("aaeiooouunc'--") + ['ss']):
@@ -149,8 +177,8 @@ def protect(s, capitalization=False):
         for n, group in reversed(list(enumerate(groups, 1))):
             s = s.replace('<#%d>' % n, group)
 
-    s = re.sub('([\u2070-\u207f]+)', r'\\textsuperscript{\1}', s)
-    s = re.sub('([\u2080-\u209f]+)', r'\\textsubscript{\1}', s)
+    s = re.sub('([\u2070-\u207f]+)', superscript, s)
+    s = re.sub('([\u2080-\u209f]+)', subscript, s)
 
     s = s.replace('\u2009', '\,')
     s = s.replace('\u2013', '--')
@@ -259,6 +287,8 @@ def protect(s, capitalization=False):
     s = s.replace('ψ', r'$\psi$')
     s = s.replace('Ω', r'$\Omega$')
     s = s.replace('ω', r'$\omega$')
+
+    s = re.sub(r'\{(\d)\}', r'\1', s)
 
     return s
 
