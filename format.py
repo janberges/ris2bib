@@ -57,8 +57,28 @@ for argument in sys.argv[1:]:
     else:
         print('Unknown argument: %s' % argument)
 
+# Simplify author names for reference identifier:
+
+simplifications = {
+    '\u00df': 'ss',# \ss
+    '\u00e1': 'a', # \'a
+    '\u00e4': 'a', # \"a
+    '\u00e7': 'c', # \c{x}
+    '\u00e9': 'e', # \'e
+    '\u00ed': 'i', # \'i
+    '\u00f1': 'n', # \~n
+    '\u00f3': 'o', # \'o
+    '\u00f6': 'o', # \"o
+    '\u00f8': 'o', # \o
+    '\u00fa': 'u', # \'u
+    '\u00fc': 'u', # \"u
+    '\u2013': '-', # --
+    '\u2014': '-', # ---
+    '\u2019': "'", # '
+    }
+
 def simplify(name):
-    for a, b in zip('áäéíóöøúüñçç’–—ß', list("aaeiooouunc'--") + ['ss']):
+    for a, b in simplifications.items():
         name = name.replace(a, b)
 
     return name
