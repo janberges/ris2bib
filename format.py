@@ -50,7 +50,7 @@ def protected(token, previous=None):
 
         # e.g. "eV":
 
-        lower = re.search('[a-z]')
+        lower = re.search('[a-z]', token)
 
         if lower and lower.start() < upper.start():
             return True
@@ -58,12 +58,12 @@ def protected(token, previous=None):
         # e.g. "Gaussian"
 
         for name in names:
-            if token.beginswith(name):
+            if token.startswith(name):
                 return True
 
         # Start of further title:
 
-        if previous and re.search('.', previous):
+        if previous and re.search('\.', previous):
                 return True
 
     return False
