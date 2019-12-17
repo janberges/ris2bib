@@ -17,6 +17,7 @@ def simplify(name):
 names = [
     'Born',
     'Coulomb',
+    'Dirac',
     'Eliashberg',
     'Fermi',
     'Fröhlich',
@@ -24,12 +25,17 @@ names = [
     'Haeckel',
     'Hubbard',
     'Jahn',
+    'Kasuya',
+    'Kittel',
     'Kohn',
+    'Matsubara',
     'Migdal',
     'Mott',
     'Oppenheimer',
+    'Padé',
     'Peierls',
     'Raman',
+    'Ruderman',
     'Stark',
     'Teller',
     'Van',
@@ -37,6 +43,7 @@ names = [
     'Wannier',
     'Wick',
     'Wigner',
+    'Yosida',
     ]
 
 def protected(token, previous=None):
@@ -69,6 +76,8 @@ def protected(token, previous=None):
     return False
 
 def protect(s, capitalization=False):
+    s = re.sub('([\u2080-\u209f])\.([\u2080-\u209f])', r'\1ₔ\2', s)
+
     if capitalization:
         groups = []
 
@@ -77,7 +86,7 @@ def protect(s, capitalization=False):
                 s = s.replace(group, '<#%d>' % len(groups))
                 groups.append(group)
 
-        separator = ' \\-\u2013\u2014.:/'
+        separator = ' \u2009\\-\u2013\u2014.:/'
 
         tokens = re.findall('[{0}]+|[^{0}]+'.format(separator), s)
 
@@ -93,8 +102,9 @@ def protect(s, capitalization=False):
     s = re.sub('([\u2070-\u207f]+)', r'\\textsuperscript{\1}', s)
     s = re.sub('([\u2080-\u209f]+)', r'\\textsubscript{\1}', s)
 
-    s = re.sub('\u2080', r'', s)
-
+    s = s.replace('\u2009', '\,')
+    s = s.replace('\u2013', '--')
+    s = s.replace('\u2014', '---')
     s = s.replace('²', '2')
     s = s.replace('³', '3')
     s = s.replace('¹', '1')
@@ -110,9 +120,10 @@ def protect(s, capitalization=False):
     s = s.replace('ø', r'{\o}')
     s = s.replace('ú', r"\'u")
     s = s.replace('ü', r'\"u')
-    s = s.replace('–', '--')
-    s = s.replace('—', '---')
+    s = s.replace('‘', "`")
     s = s.replace('’', "'")
+    s = s.replace('“', "``")
+    s = s.replace('”', "''")
     s = s.replace('⁰', '0')
     s = s.replace('ⁱ', 'i')
     s = s.replace('⁴', '4')
@@ -146,7 +157,7 @@ def protect(s, capitalization=False):
     s = s.replace('ₑ', 'e')
     s = s.replace('ₒ', 'o')
     s = s.replace('ₓ', 'x')
-    s = s.replace('ₔ', 'e')
+    s = s.replace('ₔ', '.') # misuse of subscript schwa (see above)
     s = s.replace('ₕ', 'h')
     s = s.replace('ₖ', 'k')
     s = s.replace('ₗ', 'l')
