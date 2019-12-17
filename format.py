@@ -63,11 +63,6 @@ def protected(token, previous=None):
     upper = re.search('[B-Z]', token)
 
     if upper:
-        # e.g. "K":
-
-        if len(token) == 1:
-            return True
-
         # e.g. "NaCl", "W90":
 
         if len(re.findall('[A-Z0-9]', token)) > 1:
@@ -78,6 +73,16 @@ def protected(token, previous=None):
         lower = re.search('[a-z]', token)
 
         if lower and lower.start() < upper.start():
+            return True
+
+        # Do not protect case of first letter:
+
+        if previous is None:
+            return False
+
+        # e.g. "K":
+
+        if len(token) == 1:
             return True
 
         # e.g. "Gaussian"
@@ -96,7 +101,7 @@ def protected(token, previous=None):
 
         # Start of further title:
 
-        if previous and re.search('\.', previous):
+        if re.search('\.', previous):
                 return True
 
     return False
