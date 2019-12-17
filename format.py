@@ -59,22 +59,31 @@ for argument in sys.argv[1:]:
 
 # Simplify author names for reference identifier:
 
+accents = {
+    '\u00df': r'{\ss}',
+    '\u00e1': r"\'a",
+    '\u00e4': r'\"a',
+    '\u00e7': r'\c{c}',
+    '\u00e9': r"\'e",
+    '\u00ed': r"\'i",
+    '\u00f1': r'\~n',
+    '\u00f3': r"\'o",
+    '\u00f6': r'\"o',
+    '\u00f8': r'{\o}',
+    '\u00fa': r"\'u",
+    '\u00fc': r'\"u',
+    '\u2009': '\,',
+    '\u2013': '--',
+    '\u2014': '---',
+    '\u2018': "`",
+    '\u2019': "'",
+    '\u201c': "``",
+    '\u201d': "''",
+    }
+
 simplifications = {
-    '\u00df': 'ss',# \ss
-    '\u00e1': 'a', # \'a
-    '\u00e4': 'a', # \"a
-    '\u00e7': 'c', # \c{x}
-    '\u00e9': 'e', # \'e
-    '\u00ed': 'i', # \'i
-    '\u00f1': 'n', # \~n
-    '\u00f3': 'o', # \'o
-    '\u00f6': 'o', # \"o
-    '\u00f8': 'o', # \o
-    '\u00fa': 'u', # \'u
-    '\u00fc': 'u', # \"u
-    '\u2013': '-', # --
-    '\u2014': '-', # ---
-    '\u2019': "'", # '
+    key: value.replace('}', '')[-1]
+    for key, value in accents.items()
     }
 
 def simplify(name):
@@ -221,28 +230,12 @@ def protect(s, capitalization=False):
     s = re.sub('([\u2070-\u207f]+)', sup, s)
     s = re.sub('([\u2080-\u209f]+)', sub, s)
 
-    s = s.replace('\u2009', '\,')
-    s = s.replace('\u2013', '--')
-    s = s.replace('\u2014', '---')
+    for key, value in accents.items():
+        s = s.replace(key, value)
+
     s = s.replace('²', '2')
     s = s.replace('³', '3')
     s = s.replace('¹', '1')
-    s = s.replace('ß', r'{\ss}')
-    s = s.replace('á', r"\'a")
-    s = s.replace('ä', r'\"a')
-    s = s.replace('ç', r'\c{c}')
-    s = s.replace('é', r"\'e")
-    s = s.replace('í', r"\'i")
-    s = s.replace('ñ', r'\~n')
-    s = s.replace('ó', r"\'o")
-    s = s.replace('ö', r'\"o')
-    s = s.replace('ø', r'{\o}')
-    s = s.replace('ú', r"\'u")
-    s = s.replace('ü', r'\"u')
-    s = s.replace('‘', "`")
-    s = s.replace('’', "'")
-    s = s.replace('“', "``")
-    s = s.replace('”', "''")
     s = s.replace('⁰', '0')
     s = s.replace('ⁱ', 'i')
     s = s.replace('⁴', '4')
