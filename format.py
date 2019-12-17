@@ -4,8 +4,8 @@
 import re
 import sys
 
-if len(sys.argv) != 2:
-    print("Usage: format.py <input file> > <output file>")
+if len(sys.argv) != 3:
+    print("Usage: format.py <input file> <output file>")
     quit()
 
 def simplify(name):
@@ -410,14 +410,15 @@ while n < len(entries):
         for label, entry in zip(labels, entries[n0:n]):
             entry['ID'] += label
 
-for entry in entries:
-    length = max(len(name) for name, key in types[entry['TY']] if key in entry)
-    form = "%%%ds = {%%s}," % length
+with open(sys.argv[2], 'w') as outfile:
+    for entry in entries:
+        length = max(len(name) for name, key in types[entry['TY']] if key in entry)
+        form = "%%%ds = {%%s},\n" % length
 
-    print("@%s{%s," % (entry['TY'], entry['ID']))
+        outfile.write("@%s{%s,\n" % (entry['TY'], entry['ID']))
 
-    for name, key in types[entry['TY']]:
-        if key in entry:
-            print(form % (name, entry[key]))
+        for name, key in types[entry['TY']]:
+            if key in entry:
+                outfile.write(form % (name, entry[key]))
 
-    print("}")
+        outfile.write("}\n")
