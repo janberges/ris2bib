@@ -112,10 +112,18 @@ def protect(s, capitalization=False):
     if capitalization:
         groups = []
 
-        while '{' in s or '$' in s:
-            for group in re.findall(r'\{[^{]*?\}|\$.+?\$', s):
+        while '{' in s:
+            for group in re.findall(r'\{[^{]*?\}', s):
                 s = s.replace(group, '<#%d>' % len(groups))
                 groups.append(group)
+
+        for group in re.findall(r'\$.+?\$', s):
+            s = s.replace(group, '<#%d>' % len(groups))
+
+            if re.search('[A-Z]', group):
+                group = '{%s}' % group
+
+            groups.append(group)
 
         separator = ' \u2009\\-\u2013\u2014.:,;()\[\]/'
 
