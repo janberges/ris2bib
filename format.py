@@ -150,6 +150,51 @@ subscripts = {
 
 subscripts_range = '([%s]+)' % ''.join(subscripts.keys())
 
+greeks = {
+    'α': r'\alpha',
+    'β': r'\beta',
+    'Γ': r'\Gamma',
+    'γ': r'\gamma',
+    'Δ': r'\Delta',
+    'δ': r'\delta',
+    'ϵ': r'\epsilon',
+    'ε': r'\varepsilon',
+    'ζ': r'\zeta',
+    'η': r'\eta',
+    'Θ': r'\Theta',
+    'θ': r'\theta',
+    'ϑ': r'\vartheta',
+    'ι': r'\iota',
+    'κ': r'\kappa',
+    'Λ': r'\Lambda',
+    'λ': r'\lambda',
+    'μ': r'\mu',
+    'ν': r'\nu',
+    'Ξ': r'\Xi',
+    'ξ': r'\xi',
+    'Π': r'\Pi',
+    'π': r'\pi',
+    'ϖ': r'\varpi',
+    'ρ': r'\rho',
+    'ϱ': r'\varrho',
+    'Σ': r'\Sigma',
+    'σ': r'\sigma',
+    'ς': r'\varsigma',
+    'τ': r'\tau',
+    'Υ': r'\Upsilon',
+    'υ': r'\upsilon',
+    'Φ': r'\Phi',
+    'ϕ': r'\phi',
+    'φ': r'\varphi',
+    'χ': r'\chi',
+    'Ψ': r'\Psi',
+    'ψ': r'\psi',
+    'Ω': r'\Omega',
+    'ω': r'\omega',
+    }
+
+greeks_range = '([%s]+)' % ''.join(subscripts.keys())
+
 names = [
     'Born',
     'Coulomb',
@@ -297,48 +342,10 @@ def protect(s, capitalization=False):
     for key, value in accents.items():
         s = s.replace(key, value)
 
-    # Greek letters:
+    s = re.sub(greeks_range, r'$\1$', s)
 
-    s = s.replace('α', r'$\alpha$')
-    s = s.replace('β', r'$\beta$')
-    s = s.replace('Γ', r'$\Gamma$')
-    s = s.replace('γ', r'$\gamma$')
-    s = s.replace('Δ', r'$\Delta$')
-    s = s.replace('δ', r'$\delta$')
-    s = s.replace('ϵ', r'$\epsilon$')
-    s = s.replace('ε', r'$\varepsilon$')
-    s = s.replace('ζ', r'$\zeta$')
-    s = s.replace('η', r'$\eta$')
-    s = s.replace('Θ', r'$\Theta$')
-    s = s.replace('θ', r'$\theta$')
-    s = s.replace('ϑ', r'$\vartheta$')
-    s = s.replace('ι', r'$\iota$')
-    s = s.replace('κ', r'$\kappa$')
-    s = s.replace('Λ', r'$\Lambda$')
-    s = s.replace('λ', r'$\lambda$')
-    s = s.replace('μ', r'$\mu$')
-    s = s.replace('ν', r'$\nu$')
-    s = s.replace('Ξ', r'$\Xi$')
-    s = s.replace('ξ', r'$\xi$')
-    s = s.replace('Π', r'$\Pi$')
-    s = s.replace('π', r'$\pi$')
-    s = s.replace('ϖ', r'$\varpi$')
-    s = s.replace('ρ', r'$\rho$')
-    s = s.replace('ϱ', r'$\varrho$')
-    s = s.replace('Σ', r'$\Sigma$')
-    s = s.replace('σ', r'$\sigma$')
-    s = s.replace('ς', r'$\varsigma$')
-    s = s.replace('τ', r'$\tau$')
-    s = s.replace('Υ', r'$\Upsilon$')
-    s = s.replace('υ', r'$\upsilon$')
-    s = s.replace('Φ', r'$\Phi$')
-    s = s.replace('ϕ', r'$\phi$')
-    s = s.replace('φ', r'$\varphi$')
-    s = s.replace('χ', r'$\chi$')
-    s = s.replace('Ψ', r'$\Psi$')
-    s = s.replace('ψ', r'$\psi$')
-    s = s.replace('Ω', r'$\Omega$')
-    s = s.replace('ω', r'$\omega$')
+    for key, value in greeks.items():
+        s = s.replace(key, value)
 
     s = re.sub(r'\{(\d)\}', r'\1', s)
     s = re.sub(r'_\{(\w)\}', r'_\1', s)
