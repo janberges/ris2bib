@@ -48,14 +48,17 @@ for argument in sys.argv[1:]:
 
         if key == '--sub':
             print('Subscript format: %s' % value)
-            sub = value.replace('\\', '\\\\').replace('X', '\\1')
+            sub = value
 
         elif key == '--super':
             print('Superscript format: %s' % value)
-            sup = value.replace('\\', '\\\\').replace('X', '\\1')
+            sup = value
 
     else:
         print('Unknown argument: %s' % argument)
+
+sup = sup.replace('\\', '\\\\').replace('X', '\\1')
+sub = sub.replace('\\', '\\\\').replace('X', '\\1')
 
 # Simplify author names for reference identifier:
 
@@ -91,6 +94,61 @@ def simplify(name):
         name = name.replace(a, b)
 
     return name
+
+superscripts = {
+    '\u00b2': '2',
+    '\u00b3': '3',
+    '\u00b9': '1',
+    '\u2070': '0',
+    '\u2071': 'i',
+    '\u2074': '4',
+    '\u2075': '5',
+    '\u2076': '6',
+    '\u2077': '7',
+    '\u2078': '8',
+    '\u2079': '9',
+    '\u207a': '+',
+    '\u207b': r'\ensuremath-',
+    '\u207c': '=',
+    '\u207d': '(',
+    '\u207e': ')',
+    '\u207f': 'n',
+    }
+
+superscripts_range = '([%s]+)' % ''.join(superscripts.keys())
+
+subscripts = {
+    '\u2080': '0',
+    '\u2081': '1',
+    '\u2082': '2',
+    '\u2083': '3',
+    '\u2084': '4',
+    '\u2085': '5',
+    '\u2086': '6',
+    '\u2087': '7',
+    '\u2088': '8',
+    '\u2089': '9',
+    '\u208a': '+',
+    '\u208b': r'\ensuremath-',
+    '\u208c': '=',
+    '\u208d': '(',
+    '\u208e': ')',
+    '\u2090': 'a',
+    '\u2091': 'e',
+    '\u2092': 'o',
+    '\u2093': 'x',
+    '\u2094': '.', # misuse of subscript schwa
+    '\u2095': 'h',
+    '\u2096': 'k',
+    '\u2097': 'l',
+    '\u2098': 'm',
+    '\u2099': 'n',
+    '\u209a': 'p',
+    '\u209b': 's',
+    '\u209c': 't',
+    }
+
+subscripts_range = '([%s]+)' % ''.join(subscripts.keys())
 
 names = [
     'Born',
@@ -227,57 +285,17 @@ def protect(s, capitalization=False):
         for n, group in reversed(list(enumerate(groups, 1))):
             s = s.replace('<#%d>' % n, group)
 
-    s = re.sub('([\u2070-\u207f]+)', sup, s)
-    s = re.sub('([\u2080-\u209f]+)', sub, s)
+    s = re.sub(superscripts_range, sup, s)
+    s = re.sub(  subscripts_range, sub, s)
+
+    for key, value in superscripts.items():
+        s = s.replace(key, value)
+
+    for key, value in subscripts.items():
+        s = s.replace(key, value)
 
     for key, value in accents.items():
         s = s.replace(key, value)
-
-    s = s.replace('²', '2')
-    s = s.replace('³', '3')
-    s = s.replace('¹', '1')
-    s = s.replace('⁰', '0')
-    s = s.replace('ⁱ', 'i')
-    s = s.replace('⁴', '4')
-    s = s.replace('⁵', '5')
-    s = s.replace('⁶', '6')
-    s = s.replace('⁷', '7')
-    s = s.replace('⁸', '8')
-    s = s.replace('⁹', '9')
-    s = s.replace('⁺', '+')
-    s = s.replace('⁻', '$-$')
-    s = s.replace('⁼', '=')
-    s = s.replace('⁽', '(')
-    s = s.replace('⁾', ')')
-    s = s.replace('ⁿ', 'n')
-    s = s.replace('₀', '0')
-    s = s.replace('₁', '1')
-    s = s.replace('₂', '2')
-    s = s.replace('₃', '3')
-    s = s.replace('₄', '4')
-    s = s.replace('₅', '5')
-    s = s.replace('₆', '6')
-    s = s.replace('₇', '7')
-    s = s.replace('₈', '8')
-    s = s.replace('₉', '9')
-    s = s.replace('₊', '+')
-    s = s.replace('₋', r'\ensuremath-')
-    s = s.replace('₌', '=')
-    s = s.replace('₍', '(')
-    s = s.replace('₎', ')')
-    s = s.replace('ₐ', 'a')
-    s = s.replace('ₑ', 'e')
-    s = s.replace('ₒ', 'o')
-    s = s.replace('ₓ', 'x')
-    s = s.replace('ₔ', '.') # misuse of subscript schwa (see above)
-    s = s.replace('ₕ', 'h')
-    s = s.replace('ₖ', 'k')
-    s = s.replace('ₗ', 'l')
-    s = s.replace('ₘ', 'm')
-    s = s.replace('ₙ', 'n')
-    s = s.replace('ₚ', 'p')
-    s = s.replace('ₛ', 's')
-    s = s.replace('ₜ', 't')
 
     # Greek letters:
 
