@@ -227,7 +227,7 @@ def protect(s, capitalization=False):
     s = s.replace('₈', '8')
     s = s.replace('₉', '9')
     s = s.replace('₊', '+')
-    s = s.replace('₋', '$-$')
+    s = s.replace('₋', r'\ensuremath-')
     s = s.replace('₌', '=')
     s = s.replace('₍', '(')
     s = s.replace('₎', ')')
@@ -289,6 +289,8 @@ def protect(s, capitalization=False):
     s = s.replace('ω', r'$\omega$')
 
     s = re.sub(r'\{(\d)\}', r'\1', s)
+    s = re.sub(r'_\{(\w)\}', r'_\1', s)
+    s = re.sub(r'(\$.+?\$)', lambda x: x.group().replace(r'\ensuremath', ''), s)
 
     return s
 
