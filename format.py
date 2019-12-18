@@ -457,11 +457,11 @@ entries = []
 with open(ris) as infile:
     text = infile.read()
 
-    for block in text.split('\n\n'):
+    for block in re.split('\n{2,}', text):
         entry = dict()
 
-        for line in block.split('\n'):
-            parts = line.split('  - ', 1)
+        for line in re.split('\n', block):
+            parts = re.split('\s*-\s*', line, maxsplit=1)
 
             if len(parts) == 2:
                 key, value = parts
