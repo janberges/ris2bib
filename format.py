@@ -238,6 +238,69 @@ elements = [
     'Mt', 'Ds', 'Rg', 'Cn', 'Nh', 'Fl', 'Mc', 'Lv', 'Ts', 'Og',
     ]
 
+# Considered entry types:
+
+types = dict(
+    article = [
+        ('author',  'AU'),
+        ('title',   'TI'),
+        ('journal', 'J2'),
+        ('volume',  'VL'),
+        ('pages',   'SP'),
+        ('year',    'PY'),
+        ('doi',     'DO'),
+        ],
+    unpublished = [
+        ('author', 'AU'),
+        ('title',  'TI'),
+        ('year',   'PY'),
+        ],
+    book = [
+        ('author',    'AU'),
+        ('title',     'TI'),
+        ('edition',   'ET'),
+        ('publisher', 'PB'),
+        ('address',   'CY'),
+        ('year',      'PY'),
+        ('doi',       'DO'),
+        ],
+    electronic = [
+        ('author',  'AU'),
+        ('title',   'TI'),
+        ('url',     'UR'),
+        ('urldate', 'Y2'),
+        ],
+    incollection = [
+        ('author',    'AU'),
+        ('title',     'TI'),
+        ('editor',    'A2'),
+        ('booktitle', 'J2'),
+        ('edition',   'ET'),
+        ('publisher', 'PB'),
+        ('address',   'CY'),
+        ('year',      'PY'),
+        ('doi',       'DO'),
+        ]
+    )
+
+for value in types.values():
+    value.extend([
+        ('archiveprefix', 'AP'),
+        ('eprint',        'AR'),
+        ])
+
+search_keys = set(ris_key
+    for value in types.values()
+    for bib_key, ris_key in value)
+
+# Type (TY), authors (AU), and editors (A2) are read separately:
+
+search_keys -= {'TY', 'AU', 'A2'}
+
+# Long journal name (T2) and link to PDF (L1) are used if needed:
+
+search_keys |= {'T2', 'L1'}
+
 # Simplify author names for reference identifier:
 
 def simplify(name):
@@ -395,36 +458,22 @@ with open(ris) as infile:
 
             if key in {'AU', 'A2'}:
                 if key in entry:
-                    entry[key].append(protect(value))
+                    entry[key] += ' and ' + protect(value)
 
                 else:
-                    entry[key] = [protect(value)]
+                    entry[key] = protect(value)
 
-                    if key == 'AU':
-                        entry['A1'] = value.split(',', 1)[0]
-                        entry['A1'] = simplify(entry['A1'])
-                        entry['A1'] = ''.join([c for c in entry['A1']
-                            if 65 <= ord(c) <= 90 or 97 <= ord(c) <= 122])
-
-            elif key in [
-                'CY',
-                'DO',
-                'ET',
-                'J2',
-                'L1',
-                'PB',
-                'PY',
-                'SP',
-                'T2',
-                'TI',
-                'UR',
-                'VL',
-                'Y2',
-                ]:
-
+            elif key in search_keys:
                 entry[key] = protect(value, capitalization=key == 'TI')
 
         if entry:
+            entry['ID'] = entry['AU'].split(',', 1)[0]
+            entry['ID'] = simplify(entry['ID'])
+            entry['ID'] = ''.join([c for c in entry['ID']
+                if 65 <= ord(c) <= 90 or 97 <= ord(c) <= 122])
+
+            entry['ID'] += entry['PY']
+
             if 'J2' not in entry and 'T2' in entry:
                 entry['J2'] = entry.pop('T2')
 
@@ -437,62 +486,7 @@ with open(ris) as infile:
                 entry['AP'] = 'arXiv'
                 entry['AR'] = entry.pop('L1').split('/')[-1].replace('.pdf', '')
 
-            for key in 'AU', 'A2':
-                if key in entry:
-                    entry[key] = ' and '.join(entry[key])
-
-            entry['ID'] = entry['A1'] + entry['PY']
-
             entries.append(entry)
-
-types = dict(
-    article = [
-        ('author',  'AU'),
-        ('title',   'TI'),
-        ('journal', 'J2'),
-        ('volume',  'VL'),
-        ('pages',   'SP'),
-        ('year',    'PY'),
-        ('doi',     'DO'),
-        ],
-    unpublished = [
-        ('author', 'AU'),
-        ('title',  'TI'),
-        ('year',   'PY'),
-        ],
-    book = [
-        ('author',    'AU'),
-        ('title',     'TI'),
-        ('edition',   'ET'),
-        ('publisher', 'PB'),
-        ('address',   'CY'),
-        ('year',      'PY'),
-        ('doi',       'DO'),
-        ],
-    electronic = [
-        ('author',  'AU'),
-        ('title',   'TI'),
-        ('url',     'UR'),
-        ('urldate', 'Y2'),
-        ],
-    incollection = [
-        ('author',    'AU'),
-        ('title',     'TI'),
-        ('editor',    'A2'),
-        ('booktitle', 'J2'),
-        ('edition',   'ET'),
-        ('publisher', 'PB'),
-        ('address',   'CY'),
-        ('year',      'PY'),
-        ('doi',       'DO'),
-        ]
-    )
-
-for value in types.values():
-    value.extend([
-        ('archiveprefix', 'AP'),
-        ('eprint',        'AR'),
-        ])
 
 def parseInt(string):
     number = ''.join(c for c in string if 48 <= ord(c) <= 57)
