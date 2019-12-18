@@ -60,7 +60,7 @@ for argument in sys.argv[1:]:
 sup = sup.replace('\\', '\\\\').replace('X', '\\1')
 sub = sub.replace('\\', '\\\\').replace('X', '\\1')
 
-# Simplify author names for reference identifier:
+# Data for text replacements:
 
 accents = {
     '\u00df': r'{\ss}',
@@ -88,12 +88,6 @@ simplifications = {
     key: value.replace('}', '')[-1]
     for key, value in accents.items()
     }
-
-def simplify(name):
-    for a, b in simplifications.items():
-        name = name.replace(a, b)
-
-    return name
 
 superscripts = {
     '\u00b2': '2',
@@ -244,39 +238,52 @@ elements = [
     'Mt', 'Ds', 'Rg', 'Cn', 'Nh', 'Fl', 'Mc', 'Lv', 'Ts', 'Og',
     ]
 
-def protected(token, previous=None):
-    upper = re.search('[B-Z]', token)
+# Simplify author names for reference identifier:
+
+def simplify(name):
+    for a, b in simplifications.items():
+        name = name.replace(a, b)
+
+    return name
+
+# Check if case of token/word must be protected using curly braces:
+
+def fragile(token, previous=None):
+    upper = re.search('[A-Z]', token)
 
     if upper:
-        # e.g. "NaCl", "W90":
+        # Token contains at least two uppercase characters or one uppercase
+        # character and a number, e.g., "NaCl" or "W90":
 
         if len(re.findall('[A-Z0-9]', token)) > 1:
             return True
 
-        # e.g. "eV":
+        # Token contains an uppercase character following a lowercase character,
+        # e.g., "eV":
 
         lower = re.search('[a-z]', token)
 
         if lower and lower.start() < upper.start():
             return True
 
-        # Do not protect case of first letter:
+        # Token starts with an uppercase letter that must be protected
+        # (unnecessary at the beginning of the entry):
 
         if previous is None:
             return False
 
-        # e.g. "K":
+        # Token is a single uppercase letter (except "A"), e.g., "T":
 
-        if len(token) == 1:
+        if len(token) == 1 and token != 'A':
             return True
 
-        # e.g. "Gaussian"
+        # Token stars with/derives from famous name, e.g., "Gaussian":
 
         for name in names:
             if token.startswith(name):
                 return True
 
-        # e.g. "Li"
+        # Literal part of token is symbol for chemical element, e.g., "Li":
 
         letters = ''.join(re.findall('[a-zA-Z]+', token))
 
@@ -284,7 +291,7 @@ def protected(token, previous=None):
             if letters == element:
                 return True
 
-        # Start of further title:
+        # Token follows on period:
 
         if re.search('\.', previous):
                 return True
@@ -324,7 +331,7 @@ def protect(s, capitalization=False):
         tokens = re.findall('[{0}]+|[^{0}]+'.format(separator), s)
 
         for n, token in enumerate(tokens):
-            if protected(token, tokens[n - 1] if n > 0 else None):
+            if fragile(token, tokens[n - 1] if n > 0 else None):
                 tokens[n] = '{%s}' % token
 
                 print('Protect: %s' % token)
