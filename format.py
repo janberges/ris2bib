@@ -297,17 +297,17 @@ search_keys = set(ris_key
 
 search_keys |= {'T2', 'L1'}
 
-# Simplify author names for reference identifier:
-
 def simplify(name):
+    """Simplify author names for reference identifier."""
+
     for a, b in simplifications.items():
         name = name.replace(a, b)
 
     return name
 
-# Check if case of token/word must be protected using curly braces:
-
 def fragile(token, previous=None):
+    """Check if case of token/word must be protected using curly braces."""
+
     upper = re.search('[A-Z]', token)
 
     if upper:
@@ -358,9 +358,16 @@ def fragile(token, previous=None):
     return False
 
 def protect(s):
+    """Protect certain uppercase characters using curly braces."""
+
+    # Hack: Do not consider period between subscript characters as separator:
+
     s = re.sub(subscripts_point, r'\1ₔ\2', s)
 
     print('%s...' % s[:50])
+
+    # Identify groups that are already enclosed in curly braces and substitute
+    # them with placeholders:
 
     groups = []
 
@@ -373,6 +380,9 @@ def protect(s):
 
             print('Group: %s = %s' % (replacement, group))
 
+    # Also substitute inline math with placeholders and protect them if they
+    # contain an uppercase letter.
+
     for group in re.findall(r'\$.+?\$', s):
         if re.search('[A-Z]', group):
             group = '{%s}' % group
@@ -384,9 +394,13 @@ def protect(s):
 
         print('Math: %s = %s' % (replacement, group))
 
+    # Split string into tokens:
+
     separator = ' \u2009\\-\u2013\u2014.:,;()\[\]/'
 
     tokens = re.findall('[{0}]+|[^{0}]+'.format(separator), s)
+
+    # Protect tokens where necessary:
 
     for n, token in enumerate(tokens):
         if fragile(token, tokens[n - 1] if n > 0 else None):
@@ -394,7 +408,11 @@ def protect(s):
 
             print('Protect: %s' % token)
 
+    # Join tokens into one string:
+
     s = ''.join(tokens)
+
+    # Substitute groups and inline math back:
 
     for n, group in reversed(list(enumerate(groups, 1))):
         s = s.replace('<#%d>' % n, group)
@@ -402,8 +420,18 @@ def protect(s):
     return s
 
 def escape(s):
+    """Replace non-ASCII Unicode characters by LaTeX escape sequences."""
+
+    # Add markup to ranges of certain characters:
+
     s = re.sub(superscripts_range, sup, s)
     s = re.sub(  subscripts_range, sub, s)
+    s = re.sub(      greeks_range, r'$\1$', s)
+
+    # Replace certain Unicode characters by LaTeX commands:
+
+    for key, value in accents.items():
+        s = s.replace(key, value)
 
     for key, value in superscripts.items():
         s = s.replace(key, value)
@@ -411,19 +439,18 @@ def escape(s):
     for key, value in subscripts.items():
         s = s.replace(key, value)
 
-    for key, value in accents.items():
-        s = s.replace(key, value)
-
-    s = re.sub(greeks_range, r'$\1$', s)
-
     for key, value in greeks.items():
         s = s.replace(key, value)
+
+    # Remove unnecessary curly braces and commands:
 
     s = re.sub(r'\{(\d)\}', r'\1', s)
     s = re.sub(r'_\{(\w)\}', r'_\1', s)
     s = re.sub(r'(\$.+?\$)', lambda x: x.group().replace(r'\ensuremath', ''), s)
 
     return s
+
+# Read RIS input file:
 
 entries = []
 
@@ -464,6 +491,8 @@ with open(ris) as infile:
                 entry[key] = escape(value)
 
         if entry:
+            # Generate entry identifier from first author and year:
+
             entry['ID'] = entry['AU'].split(',', 1)[0]
             entry['ID'] = simplify(entry['ID'])
             entry['ID'] = ''.join([c for c in entry['ID']
@@ -471,13 +500,19 @@ with open(ris) as infile:
 
             entry['ID'] += entry['PY']
 
+            # Use long journal name (T2) if short journal name (J2) not given:
+
             if 'J2' not in entry and 'T2' in entry:
                 entry['J2'] = entry.pop('T2')
+
+            # Use type "unpublished" for articles with "arXiv:..." as journal:
 
             if 'J2' in entry and entry['J2'].startswith('arXiv'):
                 entry['TY'] = 'unpublished'
                 entry['AP'] = 'arXiv'
                 entry['AR'] = entry.pop('J2').split()[0].split(':')[1]
+
+            # Try to extract arXiv identifier from link to PDF:
 
             elif 'L1' in entry and 'arxiv' in entry['L1'].lower():
                 entry['AP'] = 'arXiv'
@@ -486,12 +521,16 @@ with open(ris) as infile:
             entries.append(entry)
 
 def parseInt(string):
+    """Parse string as integer, ignoring all non-numbers."""
+
     number = ''.join(c for c in string if 48 <= ord(c) <= 57)
 
     if number:
         return int(number)
     else:
         return 0
+
+# Sort entries:
 
 entries = sorted(entries, key=lambda entry: (
     parseInt(entry['PY']),
@@ -501,6 +540,8 @@ entries = sorted(entries, key=lambda entry: (
     parseInt(entry.get('SP', '')),
     entry.get('TI', ''),
     ))
+
+# Add suffices non-unique identifiers:
 
 labels = 'abcdefghijklmnopqrstuvwxyz'
 
@@ -515,6 +556,8 @@ while n < len(entries):
             entry['ID'] += label
 
             print('Sublabel: %s' % entry['ID'])
+
+# Write BibTeX output file:
 
 with open(bib, 'w') as outfile:
     for entry in entries:
