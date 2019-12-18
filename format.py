@@ -115,7 +115,8 @@ superscripts = {
     '\u207f': 'n',
     }
 
-superscripts_range = '([%s]+)' % ''.join(superscripts.keys())
+superscripts_any = ''.join(superscripts.keys())
+superscripts_range = '([{0}]+)'.format(superscripts_any)
 
 subscripts = {
     '\u2080': '0',
@@ -137,7 +138,7 @@ subscripts = {
     '\u2091': 'e',
     '\u2092': 'o',
     '\u2093': 'x',
-    '\u2094': '.', # misuse of subscript schwa
+    '\u2094': '.', # misuse of subscript schwa (see subscripts_point)
     '\u2095': 'h',
     '\u2096': 'k',
     '\u2097': 'l',
@@ -148,7 +149,9 @@ subscripts = {
     '\u209c': 't',
     }
 
-subscripts_range = '([%s]+)' % ''.join(subscripts.keys())
+subscripts_any = ''.join(subscripts.keys())
+subscripts_range = '([{0}]+)'.format(subscripts_any)
+subscripts_point = '([{0}])\.([{0}])'.format(subscripts_any)
 
 greeks = {
     '\u0393': r'\Gamma',
@@ -193,7 +196,8 @@ greeks = {
     '\u03f5': r'\epsilon',
     }
 
-greeks_range = '([%s]+)' % ''.join(subscripts.keys())
+greeks_any = ''.join(greeks.keys())
+greeks_range = '([{0}]+)'.format(greeks_any)
 
 names = [
     'Born',
@@ -288,7 +292,7 @@ def protected(token, previous=None):
     return False
 
 def protect(s, capitalization=False):
-    s = re.sub('([\u2080-\u209f])\.([\u2080-\u209f])', r'\1ₔ\2', s)
+    s = re.sub(subscripts_point, r'\1ₔ\2', s)
 
     if capitalization:
         print('%s...' % s[:50])
