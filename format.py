@@ -293,11 +293,7 @@ search_keys = set(ris_key
     for value in types.values()
     for bib_key, ris_key in value)
 
-# Type (TY), authors (AU), and editors (A2) are read separately:
-
-search_keys -= {'TY', 'AU', 'A2'}
-
-# Long journal name (T2) and link to PDF (L1) are used if needed:
+# Long journal name (T2) and link to PDF (L1) are read complementarily:
 
 search_keys |= {'T2', 'L1'}
 
@@ -361,49 +357,51 @@ def fragile(token, previous=None):
 
     return False
 
-def protect(s, capitalization=False):
+def protect(s):
     s = re.sub(subscripts_point, r'\1ₔ\2', s)
 
-    if capitalization:
-        print('%s...' % s[:50])
+    print('%s...' % s[:50])
 
-        groups = []
+    groups = []
 
-        while '{' in s:
-            for group in re.findall(r'\{[^{]*?\}', s):
-                groups.append(group)
-
-                replacement = '<#%d>' % len(groups)
-                s = s.replace(group, replacement)
-
-                print('Group: %s = %s' % (replacement, group))
-
-        for group in re.findall(r'\$.+?\$', s):
-            if re.search('[A-Z]', group):
-                group = '{%s}' % group
-
+    while '{' in s:
+        for group in re.findall(r'\{[^{]*?\}', s):
             groups.append(group)
 
             replacement = '<#%d>' % len(groups)
             s = s.replace(group, replacement)
 
-            print('Math: %s = %s' % (replacement, group))
+            print('Group: %s = %s' % (replacement, group))
 
-        separator = ' \u2009\\-\u2013\u2014.:,;()\[\]/'
+    for group in re.findall(r'\$.+?\$', s):
+        if re.search('[A-Z]', group):
+            group = '{%s}' % group
 
-        tokens = re.findall('[{0}]+|[^{0}]+'.format(separator), s)
+        groups.append(group)
 
-        for n, token in enumerate(tokens):
-            if fragile(token, tokens[n - 1] if n > 0 else None):
-                tokens[n] = '{%s}' % token
+        replacement = '<#%d>' % len(groups)
+        s = s.replace(group, replacement)
 
-                print('Protect: %s' % token)
+        print('Math: %s = %s' % (replacement, group))
 
-        s = ''.join(tokens)
+    separator = ' \u2009\\-\u2013\u2014.:,;()\[\]/'
 
-        for n, group in reversed(list(enumerate(groups, 1))):
-            s = s.replace('<#%d>' % n, group)
+    tokens = re.findall('[{0}]+|[^{0}]+'.format(separator), s)
 
+    for n, token in enumerate(tokens):
+        if fragile(token, tokens[n - 1] if n > 0 else None):
+            tokens[n] = '{%s}' % token
+
+            print('Protect: %s' % token)
+
+    s = ''.join(tokens)
+
+    for n, group in reversed(list(enumerate(groups, 1))):
+        s = s.replace('<#%d>' % n, group)
+
+    return s
+
+def escape(s):
     s = re.sub(superscripts_range, sup, s)
     s = re.sub(  subscripts_range, sub, s)
 
@@ -456,15 +454,14 @@ with open(ris) as infile:
                 elif value == 'CHAP':
                     entry['TY'] = 'incollection'
 
-            if key in {'AU', 'A2'}:
-                if key in entry:
-                    entry[key] += ' and ' + protect(value)
+            if key in {'AU', 'A2'} and key in entry:
+                    entry[key] += ' and ' + escape(value)
 
-                else:
-                    entry[key] = protect(value)
+            elif key == 'TI':
+                entry[key] = escape(protect(value))
 
             elif key in search_keys:
-                entry[key] = protect(value, capitalization=key == 'TI')
+                entry[key] = escape(value)
 
         if entry:
             entry['ID'] = entry['AU'].split(',', 1)[0]
