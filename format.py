@@ -17,13 +17,16 @@ Usage
 _____
 
 format.py <input file> <output file>
-          [--sub=<format string>] [--super=<format string>]
+          [--sub=<format string>] [--super=<format string>] [--colcap=<0 or 1>]
 
 The optional arguments --sub and --super specify the markup used to convert
 sub- and superscript Unicode sequences in titles to LaTeX code. The default
 values are --sub='\textsubscript{X}' and --super='\textsuperscript{X}', where X
 is the placeholder for the replaced sequence. Possible alternative values are
 --sub='$_{X}$' and --super='$^{X}$'.
+
+If --colcap=1, words following a colon, e.g., at the beginning of subtitles,
+are capitalized. This is the default.
 """
 
 import re
@@ -41,18 +44,23 @@ except:
 
 sup = r'\textsuperscript{X}'
 sub = r'\textsubscript{X}'
+colcap = True
 
 for argument in sys.argv[1:]:
     if argument.startswith('-') and '=' in argument:
         key, value = argument.split('=')
 
         if key == '--sub':
-            print('Subscript format: %s' % value)
             sub = value
+            print('Subscript format: %s' % sub)
 
         elif key == '--super':
-            print('Superscript format: %s' % value)
             sup = value
+            print('Superscript format: %s' % sup)
+
+        elif key == '--colap':
+            colcap = bool(int(value))
+            print('Capitalize after colon: %s' % colcap)
 
     else:
         print('Unknown argument: %s' % argument)
@@ -339,6 +347,11 @@ def fragile(token, previous=None):
         if previous is None:
             return False
 
+        # The first letter after ": " is protected by BibTeX by default:
+
+        if previous == ': ':
+            return False
+
         # Token is a single uppercase letter (except "A"), e.g., "T":
 
         if len(token) == 1 and token != 'A':
@@ -494,6 +507,10 @@ with open(ris) as infile:
 
             elif key == 'TI':
                 entry[key] = escape(protect(value))
+
+                if colcap:
+                    entry[key] = re.sub('(: [^A-Z0-9\s]*?[a-z])',
+                        lambda x: x.group().upper(), entry[key])
 
             elif key in search_keys:
                 entry[key] = escape(value)
