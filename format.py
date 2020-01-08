@@ -545,8 +545,8 @@ with open(ris) as infile:
 
                     if key in entry and 'arxiv' in entry[key].lower():
                         entry['AP'] = 'arXiv'
-                        entry['AR'] = entry.pop(key).split('/')[-1]
-                        entry['AR'] = entry['AR'].replace('.pdf', '')
+                        entry['AR'] = re.search('(abs|pdf)/(.+?)(.pdf|$)',
+                            entry.pop(key)).group(2)
                         break
 
             entries.append(entry)
