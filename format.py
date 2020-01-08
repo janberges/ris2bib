@@ -309,9 +309,9 @@ search_keys = set(ris_key
     for value in types.values()
     for bib_key, ris_key in value)
 
-# Long journal name (T2) and link to PDF (L1) are read complementarily:
+# Long journal name (T2) and link to PDF (L1 etc.) are read complementarily:
 
-search_keys |= {'T2', 'L1'}
+search_keys |= {'T2', 'L1', 'L2', 'L3', 'L4'}
 
 def simplify(name):
     """Simplify author names for reference identifier."""
@@ -539,9 +539,15 @@ with open(ris) as infile:
 
             # Try to extract arXiv identifier from link to PDF:
 
-            elif 'L1' in entry and 'arxiv' in entry['L1'].lower():
-                entry['AP'] = 'arXiv'
-                entry['AR'] = entry.pop('L1').split('/')[-1].replace('.pdf', '')
+            else:
+                for n in range(4):
+                    key = 'L%d' % (n + 1)
+
+                    if key in entry and 'arxiv' in entry[key].lower():
+                        entry['AP'] = 'arXiv'
+                        entry['AR'] = entry.pop(key).split('/')[-1]
+                        entry['AR'] = entry['AR'].replace('.pdf', '')
+                        break
 
             entries.append(entry)
 
