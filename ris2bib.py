@@ -16,7 +16,7 @@ curly braces.
 Usage
 _____
 
-format.py <input file> <output file>
+ris2bib.py <input file> <output file>
           [--sub=<format string>] [--super=<format string>] [--colcap=<0 or 1>]
 
 The optional arguments --sub and --super specify the markup used to convert
