@@ -519,12 +519,12 @@ with open(ris) as infile:
         if entry:
             # Generate entry identifier from first author and year:
 
-            entry['ID'] = entry['AU'].split(',', 1)[0]
+            entry['ID'] = entry.get('AU', 'Unknown').split(',', 1)[0]
             entry['ID'] = simplify(entry['ID'])
             entry['ID'] = ''.join([c for c in entry['ID']
                 if 65 <= ord(c) <= 90 or 97 <= ord(c) <= 122])
 
-            entry['ID'] += entry['PY']
+            entry['ID'] += entry.get('PY', 'XXXX')
 
             # Use long journal name (T2) if short journal name (J2) not given:
 
@@ -563,7 +563,7 @@ def parseInt(string):
 # Sort entries:
 
 entries = sorted(entries, key=lambda entry: (
-    parseInt(entry['PY']),
+    parseInt(entry.get('PY', '')),
     entry['ID'],
     entry.get('J2', ''),
     parseInt(entry.get('VL', '')),
@@ -591,6 +591,11 @@ while n < len(entries):
 
 with open(bib, 'w') as outfile:
     for entry in entries:
+        if 'TY' not in entry:
+            entry['TY'] = 'article'
+
+            print('Unknown type (set to "article"): %s' % entry['ID'])
+
         length = max(len(name) for name, key in types[entry['TY']] if key in entry)
         form = "%%%ds = {%%s},\n" % length
 
