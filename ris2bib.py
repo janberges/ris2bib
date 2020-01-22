@@ -211,7 +211,7 @@ greeks_range = '([{0}]+)'.format(greeks_any)
 
 names = [
     'Born',
-    'Brillouin'
+    'Brillouin',
     'Coulomb',
     'Dirac',
     'Eliashberg',
