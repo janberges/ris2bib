@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 r"""
 Overview
@@ -216,7 +215,7 @@ names = [
     'Dirac',
     'Eliashberg',
     'Fermi',
-    'Fröhlich',
+    'Fr\u00f6hlich',
     'Gauss',
     'Haeckel',
     'Hubbard',
@@ -228,7 +227,7 @@ names = [
     'Migdal',
     'Mott',
     'Oppenheimer',
-    'Padé',
+    'Pad\u00e9',
     'Peierls',
     'Raman',
     'Ruderman',
@@ -384,7 +383,7 @@ def protect(s):
 
     # Hack: Do not consider period between subscript characters as separator:
 
-    s = re.sub(subscripts_point, r'\1ₔ\2', s)
+    s = re.sub(subscripts_point, r'\1\u2094\2', s)
 
     print('%s...' % s[:50])
 
