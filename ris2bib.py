@@ -219,6 +219,7 @@ names = [
     'Gauss',
     'Haeckel',
     'Hubbard',
+    'Ising',
     'Jahn',
     'Kasuya',
     'Kittel',
