@@ -470,6 +470,10 @@ def escape(s):
     s = re.sub(r'_\{(\w)\}', r'_\1', s)
     s = re.sub(r'(\$.+?\$)', lambda x: x.group().replace(r'\ensuremath', ''), s)
 
+    # Avoid line breaks at equals signs:
+
+    s = re.sub(' = ', '~=~', s)
+
     return s
 
 # Read RIS input file:
