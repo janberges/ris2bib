@@ -297,7 +297,14 @@ types = dict(
         ('address',   'CY'),
         ('year',      'PY'),
         ('doi',       'DO'),
-        ]
+        ],
+    phdthesis = [
+        ('author', 'AU'),
+        ('title',  'TI'),
+        ('school', 'PB'),
+        ('year',   'PY'),
+        ('doi',    'DO'),
+        ],
     )
 
 for value in types.values():
@@ -506,6 +513,9 @@ with open(ris) as infile:
 
                 elif value == 'CHAP':
                     entry['TY'] = 'incollection'
+
+                if value == 'THES':
+                    entry['TY'] = 'phdthesis'
 
             if key in {'AU', 'A2'} and key in entry:
                     entry[key] += ' and ' + escape(value)
