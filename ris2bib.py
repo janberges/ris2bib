@@ -526,17 +526,17 @@ with open(ris) as infile:
                     entry['TY'] = 'phdthesis'
 
             if key in {'AU', 'A2'} and key in entry:
-                    entry[key] += ' and ' + escape(value)
+                    entry[key] += ' and ' + value
 
             elif key == 'TI':
-                entry[key] = escape(protect(value))
+                entry[key] = protect(value)
 
                 if colcap:
                     entry[key] = re.sub('(: [^A-Z0-9\s]*?[a-z])',
                         lambda x: x.group().upper(), entry[key])
 
             elif key in search_keys:
-                entry[key] = escape(value)
+                entry[key] = value
 
         if entry:
             # Generate entry identifier from first author and year:
@@ -547,6 +547,11 @@ with open(ris) as infile:
                 if 65 <= ord(c) <= 90 or 97 <= ord(c) <= 122])
 
             entry['ID'] += entry.get('PY', 'XXXX')
+
+            # Replace non-ASCII Unicode characters by LaTeX escape sequences:
+
+            for key in entry:
+                entry[key] = escape(entry[key])
 
             # Use long journal name (T2) if short journal name (J2) not given:
 
