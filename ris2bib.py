@@ -531,13 +531,6 @@ with open(ris) as infile:
             if key in {'AU', 'A2'} and key in entry:
                     entry[key] += ' and ' + value
 
-            elif key == 'TI':
-                entry[key] = protect(value)
-
-                if colcap:
-                    entry[key] = re.sub('(: [^A-Z0-9\s]*?[a-z])',
-                        lambda x: x.group().upper(), entry[key])
-
             elif key in search_keys:
                 entry[key] = value
 
@@ -548,6 +541,14 @@ with open(ris) as infile:
             entry['ID'] = simplify(entry['ID'])
 
             entry['ID'] += entry.get('PY', 'XXXX')
+
+            # Protect (and change) capitalization of titles:
+
+            entry['TI'] = protect(entry['TI'])
+
+            if colcap:
+                entry['TI'] = re.sub('(: [^A-Z0-9\s]*?[a-z])',
+                    lambda x: x.group().upper(), entry['TI'])
 
             # Replace non-ASCII Unicode characters by LaTeX escape sequences:
 
