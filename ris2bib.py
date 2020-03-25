@@ -335,6 +335,9 @@ def simplify(name):
     for a, b in simplifications.items():
         name = name.replace(a, b)
 
+    name = ''.join([c for c in name
+        if 65 <= ord(c) <= 90 or 97 <= ord(c) <= 122])
+
     return name
 
 def fragile(token, previous=None):
@@ -543,8 +546,6 @@ with open(ris) as infile:
 
             entry['ID'] = entry.get('AU', 'Unknown').split(',', 1)[0]
             entry['ID'] = simplify(entry['ID'])
-            entry['ID'] = ''.join([c for c in entry['ID']
-                if 65 <= ord(c) <= 90 or 97 <= ord(c) <= 122])
 
             entry['ID'] += entry.get('PY', 'XXXX')
 
