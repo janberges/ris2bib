@@ -71,7 +71,7 @@ sub = sub.replace('\\', '\\\\').replace('X', '\\1')
 
 accents = {
     '\u00a0': '~',
-    '\u00dc': r'\"U',
+    '\u00dc': r'\"{U}',
     '\u00df': r'{\ss}',
     '\u00e1': r"\'a",
     '\u00e4': r'\"a',
