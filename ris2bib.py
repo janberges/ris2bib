@@ -492,6 +492,10 @@ def escape(s):
 
     s = re.sub(' = ', '~=~', s)
 
+    # Remove redundant spaces:
+
+    s = re.sub('  +', ' ', s)
+
     return s
 
 # Read RIS input file:
