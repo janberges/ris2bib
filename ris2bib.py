@@ -17,6 +17,7 @@ _____
 
 ris2bib.py <input file> <output file>
           [--sub=<format string>] [--super=<format string>] [--colcap=<0 or 1>]
+          [--short-year=<0 or 1>] [--skip-a=<0 or 1>]
 
 The optional arguments --sub and --super specify the markup used to convert
 sub- and superscript Unicode sequences in titles to LaTeX code. The default
@@ -26,6 +27,11 @@ is the placeholder for the replaced sequence. Possible alternative values are
 
 If --colcap=1, words following a colon, e.g., at the beginning of subtitles,
 are capitalized. This is the default.
+
+If --short-year=1, only the last two digits of the year are used for the article
+identifier. The default is --short-year=0.
+
+If --skip-a=1, sublabels "a" are omitted. The default is --skip-a=0.
 """
 
 import re
@@ -44,6 +50,8 @@ except:
 sup = r'\textsuperscript{X}'
 sub = r'\textsubscript{X}'
 colcap = True
+short_year = False
+skip_a = False
 
 for argument in sys.argv[1:]:
     if argument.startswith('-') and '=' in argument:
@@ -60,6 +68,14 @@ for argument in sys.argv[1:]:
         elif key == '--colap':
             colcap = bool(int(value))
             print('Capitalize after colon: %s' % colcap)
+
+        elif key == '--short-year':
+            short_year = bool(int(value))
+            print('Use short year in identifiers: %s' % colcap)
+
+        elif key == '--skip-a':
+            skip_a = bool(int(value))
+            print('Omit sublabel a: %s' % colcap)
 
     else:
         print('Unknown argument: %s' % argument)
@@ -544,7 +560,10 @@ with open(ris) as infile:
             entry['ID'] = entry.get('AU', 'Unknown').split(',', 1)[0]
             entry['ID'] = simplify(entry['ID'])
 
-            entry['ID'] += entry.get('PY', 'XXXX')
+            if short_year:
+                entry['ID'] += entry.get('PY', 'XX')[-2:]
+            else:
+                entry['ID'] += entry.get('PY', 'XXXX')
 
             # Protect (and change) capitalization of titles:
 
@@ -607,6 +626,9 @@ entries = sorted(entries, key=lambda entry: (
 # Add suffices non-unique identifiers:
 
 labels = 'abcdefghijklmnopqrstuvwxyz'
+
+if skip_a:
+    labels = [''] + [label for label in labels[1:]]
 
 n = 0
 while n < len(entries):
