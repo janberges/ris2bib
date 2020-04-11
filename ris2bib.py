@@ -168,6 +168,7 @@ subscripts = {
     '\u2094': '.', # misuse of subscript schwa (see subscripts_point)
     '\u2095': 'h',
     '\u2096': 'k',
+    '\u1d62': 'i',
     '\u2097': 'l',
     '\u2098': 'm',
     '\u2099': 'n',
@@ -180,7 +181,7 @@ subscripts_any = ''.join(subscripts.keys())
 subscripts_range = '([{0}]+)'.format(subscripts_any)
 subscripts_point = '([{0}])\.([{0}])'.format(subscripts_any)
 
-greeks = {
+math = {
     '\u0393': r'\Gamma',
     '\u0394': r'\Delta',
     '\u0398': r'\Theta',
@@ -221,10 +222,11 @@ greeks = {
     '\u03d6': r'\varpi',
     '\u03f1': r'\varrho',
     '\u03f5': r'\epsilon',
+    '\u2202': r'\partial',
     }
 
-greeks_any = ''.join(greeks.keys())
-greeks_range = '([{0}]+)'.format(greeks_any)
+math_any = ''.join(math.keys())
+math_range = '([{0}]+)'.format(math_any)
 
 names = [
     'Born',
@@ -482,7 +484,7 @@ def escape(s):
 
     s = re.sub(superscripts_range, sup, s)
     s = re.sub(  subscripts_range, sub, s)
-    s = re.sub(      greeks_range, r'$\1$', s)
+    s = re.sub(        math_range, r'$\1$', s)
 
     # Replace certain Unicode characters by LaTeX commands:
 
@@ -495,7 +497,7 @@ def escape(s):
     for key, value in subscripts.items():
         s = s.replace(key, value)
 
-    for key, value in greeks.items():
+    for key, value in math.items():
         s = s.replace(key, value)
 
     # Remove unnecessary curly braces and commands:
