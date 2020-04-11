@@ -146,6 +146,7 @@ superscripts_any = ''.join(superscripts.keys())
 superscripts_range = '([{0}]+)'.format(superscripts_any)
 
 subscripts = {
+    '\u1d62': 'i',
     '\u2080': '0',
     '\u2081': '1',
     '\u2082': '2',
@@ -168,7 +169,6 @@ subscripts = {
     '\u2094': '.', # misuse of subscript schwa (see subscripts_point)
     '\u2095': 'h',
     '\u2096': 'k',
-    '\u1d62': 'i',
     '\u2097': 'l',
     '\u2098': 'm',
     '\u2099': 'n',
