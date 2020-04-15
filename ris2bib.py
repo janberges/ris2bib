@@ -595,19 +595,18 @@ with open(ris) as infile:
 
             # Try to extract arXiv identifier or DOI from links:
 
-            else:
-                for key in 'UR', 'L1', 'L2', 'L3', 'L4':
-                    if key in entry:
-                        link = entry[key].lower()
+            for key in 'UR', 'L1', 'L2', 'L3', 'L4':
+                if key in entry:
+                    link = entry[key].lower()
 
-                        if not 'AR' in entry and 'arxiv' in link:
-                            entry['AP'] = 'arXiv'
-                            entry['AR'] = re.search('(abs|pdf)/(.+?)(.pdf|$)',
-                                entry.pop(key)).group(2)
+                    if not 'AR' in entry and 'arxiv' in link:
+                        entry['AP'] = 'arXiv'
+                        entry['AR'] = re.search('(abs|pdf)/(.+?)(.pdf|$)',
+                            entry.pop(key)).group(2)
 
-                        if not 'DO' in entry and 'doi.org' in link:
-                            entry['DO'] = re.search('doi\.org/(.+?)/?$',
-                                entry.pop(key)).group(1)
+                    if not 'DO' in entry and 'doi.org' in link:
+                        entry['DO'] = re.search('doi\.org/(.+?)/?$',
+                            entry.pop(key)).group(1)
 
             entries.append(entry)
 
