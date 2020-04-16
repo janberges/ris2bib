@@ -224,6 +224,7 @@ math = {
     '\u03f1': r'\varrho',
     '\u03f5': r'\epsilon',
     '\u2202': r'\partial',
+    '\u221e': r'\infty',
     }
 
 math_any = ''.join(math.keys())
