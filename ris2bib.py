@@ -245,6 +245,7 @@ names = [
     'Green',
     'Haeckel',
     'Hubbard',
+    'Hund',
     'Ising',
     'Jahn',
     'Kasuya',
