@@ -86,7 +86,6 @@ sub = sub.replace('\\', '\\\\').replace('X', '\\1')
 # Data for text replacements:
 
 accents = {
-    '\u00a0': '~',
     '\u00dc': r'\"{U}',
     '\u00df': r'{\ss}',
     '\u00e1': r"\'a",
@@ -108,7 +107,6 @@ accents = {
     '\u015e': r'\c{S}',
     '\u015f': r'\c{s}',
     '\u017c': r'\.c',
-    '\u2009': '\,',
     '\u2010': '-', # unbreakable
     '\u2013': '--',
     '\u2014': '---',
@@ -121,6 +119,11 @@ accents = {
 simplifications = {
     key: value.replace('}', '')[-1]
     for key, value in accents.items()
+    }
+
+spaces = {
+    '\u00a0': '~',
+    '\u2009': '\,',
     }
 
 superscripts = {
@@ -494,6 +497,9 @@ def escape(s):
     for key, value in accents.items():
         s = s.replace(key, value)
 
+    for key, value in spaces.items():
+        s = s.replace(key, value)
+
     for key, value in superscripts.items():
         s = s.replace(key, value)
 
@@ -577,6 +583,13 @@ with open(ris) as infile:
             if colcap:
                 entry['TI'] = re.sub('(: [^A-Z0-9\s]*?[a-z])',
                     lambda x: x.group().upper(), entry['TI'])
+
+            # Remove special spaces from authors and editors:
+
+            for key in 'AU', 'A2':
+                if key in entry:
+                    for space in spaces:
+                        entry[key] = entry[key].replace(space, ' ')
 
             # Replace non-ASCII Unicode characters by LaTeX escape sequences:
 
