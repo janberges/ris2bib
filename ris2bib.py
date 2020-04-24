@@ -229,6 +229,8 @@ math = {
     '\u03d6': r'\varpi',
     '\u03f1': r'\varrho',
     '\u03f5': r'\epsilon',
+    '\u2032': r"'",
+    '\u2033': r"''",
     '\u2202': r'\partial',
     '\u2212': r'-',
     '\u221e': r'\infty',
