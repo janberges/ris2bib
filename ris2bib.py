@@ -129,6 +129,11 @@ spaces = {
     '\u2009': '\,',
     }
 
+quotes = {
+    '\u00ab': r'{\guillemotleft}',
+    '\u00bb': r'{\guillemotright}',
+    }
+
 superscripts = {
     '\u00b2': '2',
     '\u00b3': '3',
@@ -504,6 +509,9 @@ def escape(s):
         s = s.replace(key, value)
 
     for key, value in spaces.items():
+        s = s.replace(key, value)
+
+    for key, value in quotes.items():
         s = s.replace(key, value)
 
     for key, value in superscripts.items():
