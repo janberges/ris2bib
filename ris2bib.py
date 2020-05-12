@@ -308,7 +308,6 @@ types = dict(
         ('volume',  'VL'),
         ('pages',   'SP'),
         ('year',    'PY'),
-        ('doi',     'DO'),
         ],
     unpublished = [
         ('author', 'AU'),
@@ -322,7 +321,6 @@ types = dict(
         ('publisher', 'PB'),
         ('address',   'CY'),
         ('year',      'PY'),
-        ('doi',       'DO'),
         ],
     electronic = [
         ('author',  'AU'),
@@ -339,19 +337,18 @@ types = dict(
         ('publisher', 'PB'),
         ('address',   'CY'),
         ('year',      'PY'),
-        ('doi',       'DO'),
         ],
     phdthesis = [
         ('author', 'AU'),
         ('title',  'TI'),
         ('school', 'PB'),
         ('year',   'PY'),
-        ('doi',    'DO'),
         ],
     )
 
 for value in types.values():
     value.extend([
+        ('doi',           'DO'),
         ('archiveprefix', 'AP'),
         ('eprint',        'AR'),
         ])
