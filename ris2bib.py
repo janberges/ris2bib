@@ -250,7 +250,7 @@ math = {
 math_any = ''.join(math.keys())
 math_range = '([{0}]+)'.format(math_any)
 
-names = [
+names = {
     'Born',
     'Bose',
     'Brillouin',
@@ -265,6 +265,7 @@ names = [
     'Gauss',
     'Green',
     'Haeckel',
+    'Hall',
     'Huang',
     'Hubbard',
     'Hund',
@@ -293,9 +294,9 @@ names = [
     'Wick',
     'Wigner',
     'Yosida',
-    ]
+    }
 
-elements = [
+elements = {
     'H',  'He', 'Li', 'Be', 'B',  'C',  'N',  'O',  'F',  'Ne', 'Na', 'Mg',
     'Al', 'Si', 'P',  'S',  'Cl', 'Ar', 'K',  'Ca', 'Sc', 'Ti', 'V',  'Cr',
     'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn', 'Ga', 'Ge', 'As', 'Se', 'Br', 'Kr',
@@ -306,7 +307,9 @@ elements = [
     'At', 'Rn', 'Fr', 'Ra', 'Ac', 'Th', 'Pa', 'U',  'Np', 'Pu', 'Am', 'Cm',
     'Bk', 'Cf', 'Es', 'Fm', 'Md', 'No', 'Lr', 'Rf', 'Db', 'Sg', 'Bh', 'Hs',
     'Mt', 'Ds', 'Rg', 'Cn', 'Nh', 'Fl', 'Mc', 'Lv', 'Ts', 'Og',
-    ]
+    }
+
+elements -= {'Bi'}
 
 # Considered entry types:
 
