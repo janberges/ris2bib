@@ -349,6 +349,7 @@ types = dict(
     phdthesis = [
         ('author', 'AU'),
         ('title',  'TI'),
+        ('type',   'M3'),
         ('school', 'PB'),
         ('year',   'PY'),
         ],
@@ -609,6 +610,17 @@ with open(ris) as infile:
                 if key in entry:
                     for space in spaces:
                         entry[key] = entry[key].replace(space, ' ')
+
+            # Distinguish different types of thesis:
+
+            if 'M3' in entry:
+                first = entry.pop('M3')[0].lower()
+
+                if first == 'b':
+                    entry['M3'] = "Bachelor's thesis"
+
+                elif first == 'm':
+                    entry['M3'] = "Master's thesis"
 
             # Replace non-ASCII Unicode characters by LaTeX escape sequences:
 
