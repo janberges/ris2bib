@@ -86,6 +86,7 @@ sub = sub.replace('\\', '\\\\').replace('X', '\\1')
 # Data for text replacements:
 
 accents = {
+    '\u00d6': r'\"{O}',
     '\u00dc': r'\"{U}',
     '\u00df': r'{\ss}',
     '\u00e1': r"\'a",
@@ -110,14 +111,19 @@ accents = {
     '\u0163': r'\c{t}',
     '\u01e7': r'\v{g}',
     '\u017c': r'\.c',
-    '\u2010': '-', # unbreakable
-    '\u2013': '--',
-    '\u2014': '---',
     '\u2018': "`",
     '\u2019': "'",
     '\u201c': "``",
     '\u201d': "''",
     }
+
+dashes = {
+    '\u2010': '-', # unbreakable
+    '\u2013': '--',
+    '\u2014': '---',
+    }
+
+accents.update(dashes)
 
 simplifications = {
     key: value.replace('}', '')[-1]
@@ -258,6 +264,7 @@ names = [
     'Gauss',
     'Green',
     'Haeckel',
+    'Huang',
     'Hubbard',
     'Hund',
     'Ising',
@@ -276,6 +283,7 @@ names = [
     'Raman',
     'Ruderman',
     'Stark',
+    'Sternheimer',
     'Teller',
     'Van',
     'Waals',
@@ -468,7 +476,7 @@ def protect(s):
 
     # Split string into tokens:
 
-    separator = ' \u2009\\-\u2013\u2014.:,;()\[\]/'
+    separator = ' \\-.:,;()\[\]/' + ''.join(spaces) + ''.join(dashes)
 
     tokens = re.findall('[{0}]+|[^{0}]+'.format(separator), s)
 
