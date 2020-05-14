@@ -252,6 +252,7 @@ math_range = '([{0}]+)'.format(math_any)
 
 names = [
     'Born',
+    'Bose',
     'Brillouin',
     'Burke',
     'Carlo',
@@ -287,6 +288,7 @@ names = [
     'Teller',
     'Van',
     'Waals',
+    'Weyl',
     'Wannier',
     'Wick',
     'Wigner',
