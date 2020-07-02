@@ -250,6 +250,10 @@ math = {
 math_any = ''.join(math.keys())
 math_range = '([{0}]+)'.format(math_any)
 
+others = {
+    '&': r'\&',
+    }
+
 names = {
     'Born',
     'Bose',
@@ -539,6 +543,9 @@ def escape(s):
         s = s.replace(key, value)
 
     for key, value in math.items():
+        s = s.replace(key, value)
+
+    for key, value in others.items():
         s = s.replace(key, value)
 
     # Remove unnecessary curly braces and commands:
