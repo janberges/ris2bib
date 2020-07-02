@@ -286,6 +286,7 @@ names = {
     'Pad\u00e9',
     'Peierls',
     'Perdew',
+    'Python',
     'Raman',
     'Ruderman',
     'Stark',
