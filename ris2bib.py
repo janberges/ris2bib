@@ -358,6 +358,13 @@ types = dict(
         ('school', 'PB'),
         ('year',   'PY'),
         ],
+    misc = [
+        ('author',       'AU'),
+        ('title',        'TI'),
+        ('howpublished', 'HP'),
+        ('url',          'UR'),
+        ('year',         'PY'),
+        ]
     )
 
 for value in types.values():
@@ -584,6 +591,9 @@ with open(ris) as infile:
                 if value == 'THES':
                     entry['TY'] = 'phdthesis'
 
+                elif value == 'COMP':
+                    entry['TY'] = 'misc'
+
             if key in {'AU', 'A2'} and key in entry:
                     entry[key] += ' and ' + value
 
@@ -658,6 +668,9 @@ with open(ris) as infile:
                     if not 'DO' in entry and 'doi.org' in link:
                         entry['DO'] = re.search('doi\.org/(.+?)/?$',
                             entry.pop(key)).group(1)
+
+            if entry['TY'] == 'misc' and 'UR' in entry:
+                entry['HP'] = re.sub('^.*?//', '', entry['UR'])
 
             entries.append(entry)
 
