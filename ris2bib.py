@@ -370,7 +370,14 @@ types = dict(
         ('howpublished', 'HP'),
         ('url',          'UR'),
         ('year',         'PY'),
-        ]
+        ],
+    techreport = [
+        ('author',      'AU'),
+        ('title',       'TI'),
+        ('institution', 'PB'),
+        ('url',         'UR'),
+        ('year',        'PY'),
+        ],
     )
 
 for value in types.values():
@@ -602,6 +609,9 @@ with open(ris) as infile:
 
                 elif value == 'COMP':
                     entry['TY'] = 'misc'
+
+                elif value == 'RPRT':
+                    entry['TY'] = 'techreport'
 
             if key in {'AU', 'A2'} and key in entry:
                     entry[key] += ' and ' + value
