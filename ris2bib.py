@@ -511,7 +511,7 @@ def protect(s):
 
     for n, token in enumerate(tokens):
         if fragile(token, tokens[n - 1] if n > 0 else None):
-            tokens[n] = '{%s}' % token
+            tokens[n] = '{%s}' % token.replace('<#', '<$')
 
             print('Protect: %s' % token)
 
@@ -523,6 +523,7 @@ def protect(s):
 
     for n, group in reversed(list(enumerate(groups, 1))):
         s = s.replace('<#%d>' % n, group)
+        s = s.replace('<$%d>' % n, group.strip('{}'))
 
     return s
 
