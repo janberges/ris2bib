@@ -491,13 +491,13 @@ def protect(s):
     # contain an uppercase letter.
 
     for group in re.findall(r'\$.+?\$', s):
-        if re.search('[A-Z]', group):
-            group = '{%s}' % group
-
         groups.append(group)
 
         replacement = '<#%d>' % len(groups)
         s = s.replace(group, replacement)
+
+        if re.search('[A-Z]', group):
+            groups[-1] = '{%s}' % group
 
         print('Math: %s = %s' % (replacement, group))
 
