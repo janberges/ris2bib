@@ -262,6 +262,7 @@ names = {
     'Brillouin',
     'Burke',
     'Carlo',
+    'Cooper',
     'Coulomb',
     'Dirac',
     'Eliashberg',
