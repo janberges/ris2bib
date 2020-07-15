@@ -349,7 +349,6 @@ types = dict(
     electronic = [
         ('author',  'AU'),
         ('title',   'TI'),
-        ('url',     'UR'),
         ('urldate', 'Y2'),
         ],
     incollection = [
@@ -373,20 +372,19 @@ types = dict(
         ('author',       'AU'),
         ('title',        'TI'),
         ('howpublished', 'HP'),
-        ('url',          'UR'),
         ('year',         'PY'),
         ],
     techreport = [
         ('author',      'AU'),
         ('title',       'TI'),
         ('institution', 'PB'),
-        ('url',         'UR'),
         ('year',        'PY'),
         ],
     )
 
 for value in types.values():
     value.extend([
+        ('url',           'UR'),
         ('doi',           'DO'),
         ('archiveprefix', 'AP'),
         ('eprint',        'AR'),
@@ -696,6 +694,11 @@ with open(ris) as infile:
 
             if entry['TY'] == 'misc' and 'UR' in entry:
                 entry['HP'] = re.sub('^.*?//', '', entry['UR'])
+
+            # Prefer DOI or e-print identifier over URL:
+
+            if 'UR' in entry and ('DO' in entry or 'AR' in entry):
+                entry.pop('UR')
 
             entries.append(entry)
 
