@@ -694,6 +694,7 @@ with open(ris) as infile:
 
             if entry['TY'] == 'misc' and 'UR' in entry:
                 entry['HP'] = re.sub('^.*?//', '', entry['UR'])
+                entry['HP'] = entry['HP'].replace('/', r'/\allowbreak ')
 
             # Prefer DOI or e-print identifier over URL:
 
