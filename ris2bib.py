@@ -401,8 +401,16 @@ search_keys |= {'T2', 'L1', 'L2', 'L3', 'L4'}
 def simplify(name):
     """Simplify author names for reference identifier."""
 
+    # Remove LaTeX commands:
+
+    name = re.sub(r'\\\w+', '', name)
+
+    # Remove accents etc.:
+
     for a, b in simplifications.items():
         name = name.replace(a, b)
+
+    # Keep only ASCII alphanumericals:
 
     name = ''.join([c for c in name
         if 65 <= ord(c) <= 90 or 97 <= ord(c) <= 122])
