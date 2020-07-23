@@ -684,7 +684,8 @@ with open(ris) as infile:
             # Replace non-ASCII Unicode characters by LaTeX escape sequences:
 
             for key in entry:
-                entry[key] = escape(entry[key])
+                if key not in ('AR', 'DO', 'UR'):
+                    entry[key] = escape(entry[key])
 
             # Use long journal name (T2) if short journal name (J2) not given:
 
