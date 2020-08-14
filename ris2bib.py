@@ -210,6 +210,7 @@ subscripts_range = '([{0}]+)'.format(subscripts_any)
 subscripts_point = '([{0}])\.([{0}])'.format(subscripts_any)
 
 math = {
+    '\u00d7': r'\times',
     '\u0393': r'\Gamma',
     '\u0394': r'\Delta',
     '\u0398': r'\Theta',
@@ -254,11 +255,12 @@ math = {
     '\u2033': r"''",
     '\u2202': r'\partial',
     '\u2212': r'-',
+    '\u221a': r'\sqrt',
     '\u221e': r'\infty',
     }
 
 math_any = ''.join(math.keys())
-math_range = '([{0}]+)'.format(math_any)
+math_range = '([{0}\d][{0}\d\s]*[{0}][{0}\d\s]*[{0}\d])'.format(math_any)
 
 others = {
     '&': r'\&',
