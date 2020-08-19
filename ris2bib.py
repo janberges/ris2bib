@@ -255,6 +255,7 @@ math = {
     '\u2212': r'-',
     '\u221a': r'\sqrt',
     '\u221e': r'\infty',
+    '\u2264': r'\leq',
     }
 
 math_any = ''.join(math.keys())
