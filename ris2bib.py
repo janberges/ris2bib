@@ -194,7 +194,6 @@ subscripts = {
     '\u2091': 'e',
     '\u2092': 'o',
     '\u2093': 'x',
-    '\u2094': '.', # misuse of subscript schwa (see subscripts_point)
     '\u2095': 'h',
     '\u2096': 'k',
     '\u2097': 'l',
@@ -206,8 +205,7 @@ subscripts = {
     }
 
 subscripts_any = ''.join(subscripts.keys())
-subscripts_range = '([{0}]+)'.format(subscripts_any)
-subscripts_point = '([{0}])\.([{0}])'.format(subscripts_any)
+subscripts_range = '([{0}]+([{0}.,]+[{0}])?)'.format(subscripts_any)
 
 math = {
     '\u00d7': r'\times',
@@ -260,7 +258,7 @@ math = {
     }
 
 math_any = ''.join(math.keys())
-math_range = '([{0}\d][{0}\d\s]*[{0}][{0}\d\s]*[{0}\d])'.format(math_any)
+math_range = '(([{0}\d][{0}\d\sx]*)?[{0}]+([{0}\d\sx]*[{0}\d])?)'.format(math_any)
 
 others = {
     '&': r'\&',
@@ -491,10 +489,6 @@ def fragile(token, previous=None):
 
 def protect(s):
     """Protect certain uppercase characters using curly braces."""
-
-    # Hack: Do not consider period between subscript characters as separator:
-
-    s = re.sub(subscripts_point, r'\1\u2094\2', s)
 
     print('%s...' % s[:50])
 
