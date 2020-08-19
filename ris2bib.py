@@ -334,7 +334,7 @@ elements = {
     'Mt', 'Ds', 'Rg', 'Cn', 'Nh', 'Fl', 'Mc', 'Lv', 'Ts', 'Og',
     }
 
-elements -= {'Bi'}
+elements -= {'Bi', 'In'}
 
 # Considered entry types:
 
