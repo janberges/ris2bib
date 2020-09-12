@@ -84,8 +84,8 @@ for argument in sys.argv[1:]:
             arxiv = bool(int(value))
             print('Include eprint identifiers: %s' % arxiv)
 
-    else:
-        print('Unknown argument: %s' % argument)
+        else:
+            print('Unknown argument: %s' % key)
 
 sup = sup.replace('\\', '\\\\').replace('X', '\\1')
 sub = sub.replace('\\', '\\\\').replace('X', '\\1')
