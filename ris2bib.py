@@ -482,7 +482,8 @@ def fragile(token, previous=None):
 
         for name in names:
             if token.startswith(name):
-                return True
+                if not re.match('i?ons?$', token[len(name):]):
+                    return True
 
         # Literal part of token is symbol for chemical element, e.g., "Li":
 
