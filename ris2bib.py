@@ -270,6 +270,7 @@ math_range = '(([{0}\d][{0}\d\sx]*)?[{0}]+([{0}\d\sx]*[{0}\d])?)'.format(math_an
 
 others = {
     '&': r'\&',
+    '\u00ad': r'\-',
     }
 
 names = {
