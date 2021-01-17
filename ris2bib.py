@@ -274,6 +274,7 @@ others = {
     }
 
 names = {
+    'Bethe',
     'Born',
     'Bose',
     'Brillouin',
@@ -304,6 +305,7 @@ names = {
     'Kasuya',
     'Kittel',
     'Kohn',
+    'Lifshitz',
     'Luttinger',
     'Matsubara',
     'Migdal',
@@ -319,6 +321,7 @@ names = {
     'Python',
     'Raman',
     'Ruderman',
+    'Salpeter',
     'Schwinger',
     'Stark',
     'Sternheimer',
