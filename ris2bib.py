@@ -93,6 +93,7 @@ sub = sub.replace('\\', '\\\\').replace('X', '\\1')
 # Data for text replacements:
 
 accents = {
+    '\u00c1': r"\'A",
     '\u00d6': r'\"{O}',
     '\u00dc': r'\"{U}',
     '\u00df': r'{\ss}',
