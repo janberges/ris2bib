@@ -33,7 +33,8 @@ identifier. The default is --short-year=0.
 
 If --skip-a=1, sublabels "a" are omitted. The default is --skip-a=0.
 
-If --arxiv=1, eprint identifiers are included. This is the default.
+If --arxiv=1, eprint identifiers are included even if an article has already
+been published. This is the default.
 """
 
 import re
@@ -414,13 +415,13 @@ types = dict(
         ],
     )
 
-for value in types.values():
+for key, value in types.items():
     value.extend([
         ('url',           'UR'),
         ('doi',           'DO'),
         ])
 
-    if arxiv:
+    if arxiv or key == 'unpublished':
         value.extend([
             ('archiveprefix', 'AP'),
             ('eprint',        'AR'),
