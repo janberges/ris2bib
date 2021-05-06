@@ -116,12 +116,15 @@ accents = {
     '\u0107': r"\'c",
     '\u010c': r'\v{C}',
     '\u010d': r'\v{c}',
+    '\u0119': r'\k{e}',
     '\u011b': r'\v{e}',
     '\u011f': r'\u{g}',
     '\u012d': r'{\u\i}',
     '\u0130': r'\.I',
     '\u0131': r'{\i}',
+    '\u0144': r"\'n",
     '\u0159': r'\v{r}',
+    '\u015b': r"\'s",
     '\u015e': r'\c{S}',
     '\u015f': r'\c{s}',
     '\u0160': r'\v{S}',
@@ -298,7 +301,9 @@ names = {
     'Hall',
     'Hamilton',
     'Hartree',
+    'Heeger',
     'Heisenberg',
+    'Hove',
     'Huang',
     'Hubbard',
     'Hund',
@@ -324,9 +329,11 @@ names = {
     'Raman',
     'Ruderman',
     'Salpeter',
+    'Schrieffer',
     'Schwinger',
     'Stark',
     'Sternheimer',
+    'Su',
     'Teller',
     'Tomonaga',
     'Van',
@@ -493,7 +500,9 @@ def fragile(token, previous=None):
         # Token stars with/derives from famous name, e.g., "Gaussian":
 
         for name in names:
-            if token.startswith(name):
+            if token == name:
+                return True
+            if len(name) > 3 and token.startswith(name):
                 if not re.match('i?ons?$', token[len(name):]):
                     return True
 
