@@ -337,6 +337,7 @@ names = {
     'Teller',
     'Tomonaga',
     'Van',
+    'Vanderbilt',
     'Waals',
     'Wagner',
     'Wannier',
