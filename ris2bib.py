@@ -18,6 +18,7 @@ _____
 ris2bib.py <input file> <output file>
           [--sub=<format string>] [--super=<format string>] [--colcap=<0 or 1>]
           [--short-year=<0 or 1>] [--skip-a=<0 or 1>] [--arxiv=<0 or 1>]
+          [--nature=<0 or 1>]
 
 The optional arguments --sub and --super specify the markup used to convert
 sub- and superscript Unicode sequences in titles to LaTeX code. The default
@@ -35,6 +36,8 @@ If --skip-a=1, sublabels "a" are omitted. The default is --skip-a=0.
 
 If --arxiv=1, eprint identifiers are included even if an article has already
 been published. This is the default.
+
+If --nature=1, DOIs are provided via the URL entry. The default is --nature=0.
 """
 
 import re
@@ -56,6 +59,7 @@ colcap = True
 short_year = False
 skip_a = False
 arxiv = True
+nature = False
 
 for argument in sys.argv[1:]:
     if argument.startswith('-') and '=' in argument:
@@ -84,6 +88,10 @@ for argument in sys.argv[1:]:
         elif key == '--arxiv':
             arxiv = bool(int(value))
             print('Include eprint identifiers: %s' % arxiv)
+
+        elif key == '--nature':
+            nature = bool(int(value))
+            print('Nature DOI style: %s' % nature)
 
         else:
             print('Unknown argument: %s' % key)
@@ -753,6 +761,9 @@ with open(ris) as infile:
 
             if 'UR' in entry and ('DO' in entry or 'AR' in entry):
                 entry.pop('UR')
+
+            if nature and 'DO' in entry:
+                entry['UR'] = 'https://doi.org/%s' % entry.pop('DO')
 
             entries.append(entry)
 
