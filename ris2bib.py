@@ -16,9 +16,9 @@ Usage
 _____
 
 ris2bib.py <input file> <output file>
-          [--sub=<format string>] [--super=<format string>] [--colcap=<0 or 1>]
-          [--short-year=<0 or 1>] [--skip-a=<0 or 1>] [--arxiv=<0 or 1>]
-          [--nature=<0 or 1>]
+    [--sub=<format string>] [--super=<format string>] [--colcap=<0 or 1>]
+    [--short-year=<0 or 1>] [--skip-a=<0 or 1>] [--arxiv=<0 or 1>]
+    [--nature=<0 or 1>]
 
 The optional arguments --sub and --super specify the markup used to convert
 sub- and superscript Unicode sequences in titles to LaTeX code. The default
