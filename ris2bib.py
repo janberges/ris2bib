@@ -49,7 +49,7 @@ try:
     ris, bib = [argument for argument in sys.argv[1:]
         if not argument.startswith('-')]
 except:
-    raise SystemExit("Wrong arguments. Check source code for documentation.")
+    raise SystemExit(__doc__)
 
 # Read optional command-line arguments:
 
