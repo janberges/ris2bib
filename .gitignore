@@ -1,2 +1,5 @@
 *.bib
+*.egg-info
 *.ris
+build
+dist
