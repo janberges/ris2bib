@@ -37,7 +37,8 @@ If --skip-a=1, sublabels "a" are omitted. The default is --skip-a=0.
 If --arxiv=1, eprint identifiers are included even if an article has already
 been published. This is the default.
 
-If --nature=1, DOIs are provided via the URL entry. The default is --nature=0.
+If --nature=1, DOIs and eprint identifiers are provided via the URL entry. The
+default is --nature=0.
 """
 
 import re
@@ -763,8 +764,12 @@ with open(ris) as infile:
             if 'UR' in entry and ('DO' in entry or 'AR' in entry):
                 entry.pop('UR')
 
-            if nature and 'DO' in entry:
-                entry['UR'] = 'https://doi.org/%s' % entry.pop('DO')
+            if nature:
+                if 'DO' in entry:
+                    entry['UR'] = 'https://doi.org/%s' % entry.pop('DO')
+                elif entry.get('AP') == 'arXiv':
+                    entry['UR'] = 'https://arxiv.org/abs/%s' % entry.pop('AR')
+                    entry.pop('AP')
 
             entries.append(entry)
 
