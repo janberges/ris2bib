@@ -18,7 +18,7 @@ _____
 ris2bib.py <input file> <output file>
     [--sub=<format string>] [--super=<format string>] [--colcap=<0 or 1>]
     [--short-year=<0 or 1>] [--skip-a=<0 or 1>] [--arxiv=<0 or 1>]
-    [--nature=<0 or 1>]
+    [--nature=<0 or 1>] [--scipost=<0 or 1>]
 
 The optional arguments --sub and --super specify the markup used to convert
 sub- and superscript Unicode sequences in titles to LaTeX code. The default
@@ -39,6 +39,10 @@ been published. This is the default.
 
 If --nature=1, DOIs and eprint identifiers are provided via the URL entry. The
 default is --nature=0.
+
+If --scipost=1, eprints are provided with a full URL rather than an archive
+prefix and identifier, and the entry type "misc" instead of "unpublished" is
+used. The default is --scipost=0.
 """
 
 import re
@@ -61,6 +65,7 @@ short_year = False
 skip_a = False
 arxiv = True
 nature = False
+scipost = False
 
 for argument in sys.argv[1:]:
     if argument.startswith('-') and '=' in argument:
@@ -93,6 +98,10 @@ for argument in sys.argv[1:]:
         elif key == '--nature':
             nature = bool(int(value))
             print('Nature DOI style: %s' % nature)
+
+        elif key == '--scipost':
+            scipost = bool(int(value))
+            print('SciPost eprint style: %s' % scipost)
 
         else:
             print('Unknown argument: %s' % key)
@@ -439,7 +448,7 @@ for key, value in types.items():
         ('doi',           'DO'),
         ])
 
-    if arxiv or key == 'unpublished':
+    if arxiv or key in {'misc', 'unpublished'}:
         value.extend([
             ('archiveprefix', 'AP'),
             ('eprint',        'AR'),
@@ -755,6 +764,8 @@ with open(ris) as infile:
                         entry['DO'] = re.search('doi\.org/(.+?)/?$',
                             entry.pop(key)).group(1)
 
+            # Strip protocol/scheme from URL shown as "howpublished":
+
             if entry['TY'] == 'misc' and 'UR' in entry:
                 entry['HP'] = re.sub('^.*?//', '', entry['UR'])
                 entry['HP'] = entry['HP'].replace('/', r'/\allowbreak ')
@@ -764,12 +775,22 @@ with open(ris) as infile:
             if 'UR' in entry and ('DO' in entry or 'AR' in entry):
                 entry.pop('UR')
 
+            # Consider journal-specific bibliography style files:
+
             if nature:
                 if 'DO' in entry:
                     entry['UR'] = 'https://doi.org/%s' % entry.pop('DO')
                 elif entry.get('AP') == 'arXiv':
                     entry['UR'] = 'https://arxiv.org/abs/%s' % entry.pop('AR')
                     entry.pop('AP')
+
+            elif scipost:
+                if entry.get('AP') == 'arXiv':
+                    entry['AR'] = 'https://arxiv.org/abs/%s' % entry['AR']
+                    entry.pop('AP')
+
+                if entry['TY'] == 'unpublished':
+                    entry['TY'] = 'misc'
 
             entries.append(entry)
 
