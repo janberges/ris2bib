@@ -766,7 +766,7 @@ with open(ris) as infile:
 
             # Strip protocol/scheme from URL shown as "howpublished":
 
-            if entry['TY'] == 'misc' and 'UR' in entry:
+            if entry.get('TY') == 'misc' and 'UR' in entry:
                 entry['HP'] = re.sub('^.*?//', '', entry['UR'])
                 entry['HP'] = entry['HP'].replace('/', r'/\allowbreak ')
 
@@ -789,7 +789,7 @@ with open(ris) as infile:
                     entry['AR'] = 'https://arxiv.org/abs/%s' % entry['AR']
                     entry.pop('AP')
 
-                if entry['TY'] == 'unpublished':
+                if entry.get('TY') == 'unpublished':
                     entry['TY'] = 'misc'
 
             entries.append(entry)
