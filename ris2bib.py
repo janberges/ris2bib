@@ -458,9 +458,9 @@ search_keys = set(ris_key
     for value in types.values()
     for bib_key, ris_key in value)
 
-# Long journal name (T2) and link to PDF (L1 etc.) are read complementarily:
+# Long journal names (T2) are read complementarily:
 
-search_keys |= {'T2', 'L1', 'L2', 'L3', 'L4'}
+search_keys.add('T2')
 
 def simplify(name):
     """Simplify author names for reference identifier."""
@@ -689,7 +689,13 @@ with open(ris) as infile:
                     entry['TY'] = 'techreport'
 
             if key in {'AU', 'A2'} and key in entry:
-                    entry[key] += ' and ' + value
+                entry[key] += ' and ' + value
+
+            elif re.match(r'L\d', key):
+                if 'LX' in entry:
+                    entry['LX'].add(value)
+                else:
+                    entry['LX'] = {value}
 
             elif key in search_keys:
                 entry[key] = value
@@ -734,7 +740,7 @@ with open(ris) as infile:
             # Replace non-ASCII Unicode characters by LaTeX escape sequences:
 
             for key in entry:
-                if key not in ('AR', 'DO', 'UR'):
+                if key not in ('AR', 'DO', 'UR', 'LX'):
                     entry[key] = escape(entry[key])
 
             # Use long journal name (T2) if short journal name (J2) not given:
@@ -751,18 +757,23 @@ with open(ris) as infile:
 
             # Try to extract arXiv identifier or DOI from links:
 
-            for key in 'UR', 'L1', 'L2', 'L3', 'L4':
-                if key in entry:
-                    link = entry[key].lower()
+            if 'UR' in entry:
+                if 'LX' in entry:
+                    entry['LX'].add(entry['UR'])
+                else:
+                    entry['LX'] = {entry['UR']}
 
-                    if not 'AR' in entry and 'arxiv' in link:
-                        entry['AP'] = 'arXiv'
-                        entry['AR'] = re.search('(abs|pdf)/(.+?)(.pdf|$)',
-                            entry.pop(key)).group(2)
+            for link in entry['LX']:
+                link = link.lower()
 
-                    if not 'DO' in entry and 'doi.org' in link:
-                        entry['DO'] = re.search('doi\.org/(.+?)/?$',
-                            entry.pop(key)).group(1)
+                if not 'AR' in entry and 'arxiv' in link:
+                    entry['AP'] = 'arXiv'
+                    entry['AR'] = re.search('(abs|pdf)/(.+?)(.pdf|$)',
+                        link).group(2)
+
+                if not 'DO' in entry and 'doi.org' in link:
+                    entry['DO'] = re.search('doi\.org/(.+?)/?$',
+                        link).group(1)
 
             # Strip protocol/scheme from URL shown as "howpublished":
 
