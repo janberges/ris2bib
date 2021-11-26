@@ -763,17 +763,16 @@ with open(ris) as infile:
                 else:
                     entry['LX'] = {entry['UR']}
 
-            for link in entry['LX']:
-                link = link.lower()
+            if 'LX' in entry:
+                for link in entry['LX']:
+                    if not 'AR' in entry and 'arxiv' in link.lower():
+                        entry['AP'] = 'arXiv'
+                        entry['AR'] = re.search('(abs|pdf)/(.+?)(.pdf|$)',
+                            link).group(2)
 
-                if not 'AR' in entry and 'arxiv' in link:
-                    entry['AP'] = 'arXiv'
-                    entry['AR'] = re.search('(abs|pdf)/(.+?)(.pdf|$)',
-                        link).group(2)
-
-                if not 'DO' in entry and 'doi.org' in link:
-                    entry['DO'] = re.search('doi\.org/(.+?)/?$',
-                        link).group(1)
+                    if not 'DO' in entry and 'doi.org' in link.lower():
+                        entry['DO'] = re.search('doi\.org/(.+?)/?$',
+                            link).group(1)
 
             # Strip protocol/scheme from URL shown as "howpublished":
 
