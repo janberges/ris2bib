@@ -691,11 +691,20 @@ with open(ris) as infile:
             if key in {'AU', 'A2'} and key in entry:
                 entry[key] += ' and ' + value
 
-            elif re.match(r'L\d', key):
-                if 'LX' in entry:
-                    entry['LX'].add(value)
-                else:
-                    entry['LX'] = {value}
+            elif key == 'UR' or re.match(r'L\d', key):
+                if key == 'UR':
+                    entry[key] = value
+
+                # Try to extract arXiv identifier or DOI from links:
+
+                if not 'AR' in entry and 'arxiv' in value.lower():
+                    entry['AP'] = 'arXiv'
+                    entry['AR'] = re.search('(abs|pdf)/(.+?)(.pdf|$)',
+                        value).group(2)
+
+                if not 'DO' in entry and 'doi.org' in value.lower():
+                    entry['DO'] = re.search('doi\.org/(.+?)/?$',
+                        value).group(1)
 
             elif key in search_keys:
                 entry[key] = value
@@ -740,7 +749,7 @@ with open(ris) as infile:
             # Replace non-ASCII Unicode characters by LaTeX escape sequences:
 
             for key in entry:
-                if key not in ('AR', 'DO', 'UR', 'LX'):
+                if key not in ('AR', 'DO', 'UR'):
                     entry[key] = escape(entry[key])
 
             # Use long journal name (T2) if short journal name (J2) not given:
@@ -754,25 +763,6 @@ with open(ris) as infile:
                 entry['TY'] = 'unpublished'
                 entry['AP'] = 'arXiv'
                 entry['AR'] = entry.pop('J2').split()[0].split(':')[1]
-
-            # Try to extract arXiv identifier or DOI from links:
-
-            if 'UR' in entry:
-                if 'LX' in entry:
-                    entry['LX'].add(entry['UR'])
-                else:
-                    entry['LX'] = {entry['UR']}
-
-            if 'LX' in entry:
-                for link in entry['LX']:
-                    if not 'AR' in entry and 'arxiv' in link.lower():
-                        entry['AP'] = 'arXiv'
-                        entry['AR'] = re.search('(abs|pdf)/(.+?)(.pdf|$)',
-                            link).group(2)
-
-                    if not 'DO' in entry and 'doi.org' in link.lower():
-                        entry['DO'] = re.search('doi\.org/(.+?)/?$',
-                            link).group(1)
 
             # Strip protocol/scheme from URL shown as "howpublished":
 
