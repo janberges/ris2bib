@@ -11,7 +11,11 @@ with open(bbl) as infile:
 arg = r' *(<#\d+>|\d| \S)'
 
 outfile = open(html, 'w')
-outfile.write('<!DOCTYPE html><html><body><ul>')
+outfile.write('''<!DOCTYPE html>
+<html>
+<body>
+<ul>
+''')
 
 for s in re.findall(r'\\BibitemOpen(.+?)\\BibitemShut', s, re.DOTALL)[1:]:
     s = re.sub(r'\n', r' ', s)
@@ -34,6 +38,7 @@ for s in re.findall(r'\\BibitemOpen(.+?)\\BibitemShut', s, re.DOTALL)[1:]:
         groups[n] = re.sub(r'\\(Eprint|href)' + 2 * arg, r'<a href="\2">\3</a>', groups[n])
         groups[n] = re.sub(r'\\emph' + arg, r'<em>\1</em>', groups[n])
         groups[n] = re.sub(r'\\textbf' + arg, r'<b>\1</b>', groups[n])
+        groups[n] = re.sub(r'\\textsubscript(\d)', r'&#x208\1;', groups[n])
         groups[n] = re.sub(r'\\textsubscript' + arg, r'<sub>\1</sub>', groups[n])
 
     s = groups[-1]
@@ -46,7 +51,10 @@ for s in re.findall(r'\\BibitemOpen(.+?)\\BibitemShut', s, re.DOTALL)[1:]:
     s = re.sub(r'\\ ', r' ', s)
     s = re.sub(r'\\"([aeiou])', r'&\1uml;', s)
 
-    outfile.write('<li>%s</li>' % s.strip())
+    outfile.write('<li> %s\n' % s.strip())
 
-outfile.write('</ul></body></html>')
+outfile.write('''</ul>
+</body>
+</html>
+''')
 outfile.close()
