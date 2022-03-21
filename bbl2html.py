@@ -49,7 +49,8 @@ for s in re.findall(r'\\BibitemOpen(.+?)\\BibitemShut', s, re.DOTALL)[1:]:
     s = re.sub(r'--', r'&ndash;', s)
     s = re.sub(r'~', r'&nbsp;', s)
     s = re.sub(r'\\ ', r' ', s)
-    s = re.sub(r'\\"([aeiou])', r'&\1uml;', s)
+    s = re.sub(r"\\'([aeiou])", r'&\1acute;', s, flags=re.I)
+    s = re.sub(r'\\"([aeiou])', r'&\1uml;', s, flags=re.I)
 
     outfile.write('<li> %s\n' % s.strip())
 
