@@ -155,7 +155,7 @@ accents = {
     '\u017c': r'\.c',
     '\u017e': r'\v{z}',
     '\u01e7': r'\v{g}',
-    '\u2018': "`",
+    '\u2018': '`',
     '\u2019': "'",
     '\u201c': "``",
     '\u201d': "''",
@@ -293,7 +293,8 @@ math = {
     }
 
 math_any = ''.join(math.keys())
-math_range = '(([{0}\d][{0}\d\sx]*)?[{0}]+([{0}\d\sx]*[{0}\d])?)'.format(math_any)
+math_range = '(([{0}\d][{0}\d\sx]*)?[{0}]+([{0}\d\sx]*[{0}\d])?)'.format(
+    math_any)
 
 others = {
     '&': r'\&',
@@ -388,73 +389,73 @@ elements -= {'Bi', 'In'}
 # Considered entry types:
 
 types = dict(
-    article = [
-        ('author',  'AU'),
-        ('title',   'TI'),
-        ('journal', 'J2'),
-        ('volume',  'VL'),
-        ('pages',   'SP'),
-        ('year',    'PY'),
-        ],
-    unpublished = [
+    article=[
         ('author', 'AU'),
-        ('title',  'TI'),
-        ('year',   'PY'),
+        ('title', 'TI'),
+        ('journal', 'J2'),
+        ('volume', 'VL'),
+        ('pages', 'SP'),
+        ('year', 'PY'),
         ],
-    book = [
-        ('author',    'AU'),
-        ('title',     'TI'),
-        ('edition',   'ET'),
+    unpublished=[
+        ('author', 'AU'),
+        ('title', 'TI'),
+        ('year', 'PY'),
+        ],
+    book=[
+        ('author', 'AU'),
+        ('title', 'TI'),
+        ('edition', 'ET'),
         ('publisher', 'PB'),
-        ('address',   'CY'),
-        ('year',      'PY'),
+        ('address', 'CY'),
+        ('year', 'PY'),
         ],
-    electronic = [
-        ('author',  'AU'),
-        ('title',   'TI'),
+    electronic=[
+        ('author', 'AU'),
+        ('title', 'TI'),
         ('urldate', 'Y2'),
         ],
-    incollection = [
-        ('author',    'AU'),
-        ('title',     'TI'),
-        ('editor',    'A2'),
-        ('booktitle', 'J2'),
-        ('edition',   'ET'),
-        ('publisher', 'PB'),
-        ('address',   'CY'),
-        ('year',      'PY'),
-        ],
-    phdthesis = [
+    incollection=[
         ('author', 'AU'),
-        ('title',  'TI'),
-        ('type',   'M3'),
+        ('title', 'TI'),
+        ('editor', 'A2'),
+        ('booktitle', 'J2'),
+        ('edition', 'ET'),
+        ('publisher', 'PB'),
+        ('address', 'CY'),
+        ('year', 'PY'),
+        ],
+    phdthesis=[
+        ('author', 'AU'),
+        ('title', 'TI'),
+        ('type', 'M3'),
         ('school', 'PB'),
-        ('year',   'PY'),
+        ('year', 'PY'),
         ],
-    misc = [
-        ('author',       'AU'),
-        ('title',        'TI'),
+    misc=[
+        ('author', 'AU'),
+        ('title', 'TI'),
         ('howpublished', 'HP'),
-        ('year',         'PY'),
+        ('year', 'PY'),
         ],
-    techreport = [
-        ('author',      'AU'),
-        ('title',       'TI'),
+    techreport=[
+        ('author', 'AU'),
+        ('title', 'TI'),
         ('institution', 'PB'),
-        ('year',        'PY'),
+        ('year', 'PY'),
         ],
     )
 
 for key, value in types.items():
     value.extend([
-        ('url',           'UR'),
-        ('doi',           'DO'),
+        ('url', 'UR'),
+        ('doi', 'DO'),
         ])
 
     if arxiv or key in {'misc', 'unpublished'}:
         value.extend([
             ('archiveprefix', 'AP'),
-            ('eprint',        'AR'),
+            ('eprint', 'AR'),
             ])
 
 search_keys = set(ris_key
@@ -609,8 +610,8 @@ def escape(s):
     # Add markup to ranges of certain characters:
 
     s = re.sub(superscripts_range, sup, s)
-    s = re.sub(  subscripts_range, sub, s)
-    s = re.sub(        math_range, r'$\1$', s)
+    s = re.sub(subscripts_range, sub, s)
+    s = re.sub(math_range, r'$\1$', s)
 
     # Replace certain Unicode characters by LaTeX commands:
 
@@ -846,13 +847,15 @@ with open(bib, 'w') as outfile:
 
             print('Unknown type (set to "article"): %s' % entry['ID'])
 
-        length = max(len(name) for name, key in types[entry['TY']] if key in entry)
-        form = "%%%ds = {%%s},\n" % length
+        length = max(len(name) for name, key in types[entry['TY']]
+            if key in entry)
 
-        outfile.write("@%s{%s,\n" % (entry['TY'], entry['ID']))
+        form = '%%%ds = {%%s},\n' % length
+
+        outfile.write('@%s{%s,\n' % (entry['TY'], entry['ID']))
 
         for name, key in types[entry['TY']]:
             if key in entry:
                 outfile.write(form % (name, entry[key]))
 
-        outfile.write("}\n")
+        outfile.write('}\n')
