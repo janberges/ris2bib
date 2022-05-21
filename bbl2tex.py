@@ -37,6 +37,7 @@ for s in re.findall(r'\\BibitemOpen(.+?)\\BibitemShut', s, re.DOTALL)[1:]:
         groups[n] = re.sub(r'\\bib(info|field)' + 2 * arg, r'\3', groups[n])
         groups[n] = re.sub(r'\\(Eprint|href)' + 2 * arg, r'\\href{\2}{\3}', groups[n])
         groups[n] = re.sub(r'\\(emph|textbf)' + arg, r'\\\1{\2}', groups[n])
+        groups[n] = re.sub(r'\\natexlab' + arg, '', groups[n])
 
     s = groups[-1]
 
