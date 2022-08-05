@@ -843,9 +843,12 @@ while n < len(entries):
 with open(bib, 'w') as outfile:
     for entry in entries:
         if 'TY' not in entry:
-            entry['TY'] = 'article'
+            if 'J2' in entry:
+                entry['TY'] = 'article'
+            else:
+                entry['TY'] = 'unpublished'
 
-            print('Unknown type (set to "article"): %s' % entry['ID'])
+            print('Unknown type (set to "%(TY)s"): %(ID)s' % entry)
 
         length = max(len(name) for name, key in types[entry['TY']]
             if key in entry)
