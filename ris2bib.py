@@ -750,6 +750,12 @@ with open(ris) as infile:
                 elif first == 'm':
                     entry['M3'] = "Master's thesis"
 
+                elif first == 'd':
+                    entry['M3'] = "Dissertation"
+
+                elif first == 'p':
+                    pass # "Ph.D. thesis" should be the default
+
             # Replace non-ASCII Unicode characters by LaTeX escape sequences:
 
             for key in entry:
