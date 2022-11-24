@@ -420,6 +420,7 @@ types = dict(
         ('title', 'TI'),
         ('editor', 'A2'),
         ('booktitle', 'J2'),
+        ('volume', 'VL'),
         ('edition', 'ET'),
         ('publisher', 'PB'),
         ('address', 'CY'),
