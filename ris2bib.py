@@ -18,7 +18,7 @@ _____
 ris2bib.py <input file> <output file>
     [--sub=<format string>] [--super=<format string>] [--colcap=<0 or 1>]
     [--short-year=<0 or 1>] [--skip-a=<0 or 1>] [--arxiv=<0 or 1>]
-    [--nature=<0 or 1>] [--scipost=<0 or 1>]
+    [--nature=<0 or 1>] [--scipost=<0 or 1>] [--etal=<count>]
 
 The optional arguments --sub and --super specify the markup used to convert
 sub- and superscript Unicode sequences in titles to LaTeX code. The default
@@ -43,6 +43,10 @@ default is --nature=0.
 If --scipost=1, eprints are provided with a full URL rather than an archive
 prefix and identifier, and the entry type "misc" instead of "unpublished" is
 used. The default is --scipost=0.
+
+If a nonzero maximum number of authors is specified via --etal, author lists
+with more authors are reduced to the first author "and others". --etal=15 is
+appropriate for APS journals. The default is --etal=0.
 """
 
 import re
@@ -66,6 +70,7 @@ skip_a = False
 arxiv = True
 nature = False
 scipost = False
+etal = 0
 
 for argument in sys.argv[1:]:
     if argument.startswith('-') and '=' in argument:
@@ -102,6 +107,10 @@ for argument in sys.argv[1:]:
         elif key == '--scipost':
             scipost = bool(int(value))
             print('SciPost eprint style: %s' % scipost)
+
+        elif key == '--etal':
+            etal = int(value)
+            print('Maximum number of listed authors: %d' % etal)
 
         else:
             print('Unknown argument: %s' % key)
@@ -743,6 +752,14 @@ with open(ris) as infile:
                 if key in entry:
                     for space in spaces:
                         entry[key] = entry[key].replace(space, ' ')
+
+            # Reduce long author lists to first author "and others":
+
+            if etal > 0 and 'AU' in entry:
+                authors = entry['AU'].split(' and ')
+
+                if len(authors) > etal:
+                    entry['AU'] = '%s and others' % authors[0]
 
             # Distinguish different types of thesis:
 
