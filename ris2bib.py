@@ -796,6 +796,11 @@ with open(ris) as infile:
                 entry['AP'] = 'arXiv'
                 entry['AR'] = entry.pop('J2').split()[0].split(':')[1]
 
+            # Use type "unpublished" for articles with "arXiv" as publisher:
+
+            if 'PB' in entry and entry['PB'] == 'arXiv':
+                entry['TY'] = 'unpublished'
+
             # Strip protocol/scheme from URL shown as "howpublished":
 
             if entry.get('TY') == 'misc' and 'UR' in entry:
@@ -806,6 +811,12 @@ with open(ris) as infile:
 
             if 'UR' in entry and ('DO' in entry or 'AR' in entry):
                 entry.pop('UR')
+
+            # Prefer eprint identifier of unpublished works over DOI:
+
+            if 'TY' in entry and entry['TY'] == 'unpublished':
+                if 'AR' in entry and 'DO' in entry:
+                    entry.pop('DO')
 
             # Consider journal-specific bibliography style files:
 
