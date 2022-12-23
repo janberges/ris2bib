@@ -9,6 +9,7 @@ with open(bbl) as infile:
     s = infile.read()
 
 arg = r' *(<#\d+>|\d| \S)'
+noarg = ' *({})?'
 
 outfile = open(html, 'w')
 outfile.write('''<!DOCTYPE html>
@@ -52,6 +53,7 @@ for s in re.findall(r'\\BibitemOpen(.+?)\\BibitemShut', s, re.DOTALL)[1:]:
     s = re.sub(r'\\ ', r' ', s)
     s = re.sub(r"\\'([aeiou])", r'&\1acute;', s, flags=re.I)
     s = re.sub(r'\\"([aeiou])', r'&\1uml;', s, flags=re.I)
+    s = re.sub(r'\\allowbreak' + noarg, r'&#x200B;', s)
 
     outfile.write('<li> %s\n' % s.strip())
 
