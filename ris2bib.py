@@ -730,6 +730,14 @@ with open(ris) as infile:
                     entry['DO'] = re.search('doi\.org/(.+?)/?$',
                         value).group(1)
 
+                # Handle Materials Cloud Archive records:
+
+                if 'archive.materialscloud.org' in value.lower():
+                    entry['TY'] = 'article'
+                    entry['J2'] = 'Materials Cloud Archive'
+                    entry['VL'], entry['SP'] = re.search('record/(.+?)/?$',
+                        value).group(1).split('.')
+
             elif key in search_keys:
                 entry[key] = value
 
