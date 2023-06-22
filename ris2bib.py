@@ -482,9 +482,9 @@ search_keys = set(ris_key
     for value in types.values()
     for bib_key, ris_key in value)
 
-# Long journal names (T2) are read complementarily:
+# Date (DA) and long journal names (T2) are read complementarily:
 
-search_keys.add('T2')
+search_keys |= {'DA', 'T2'}
 
 def simplify(name):
     """Simplify author names for reference identifier."""
@@ -798,6 +798,11 @@ with open(ris) as infile:
                 if key not in ('AR', 'DO', 'UR'):
                     entry[key] = escape(entry[key])
 
+            # Ensure that unknown date components are sorted after known ones:
+
+            if 'DA' in entry:
+                entry['DA'] = entry['DA'].replace('/', '\\')
+
             # Use long journal name (T2) if short journal name (J2) not given:
 
             if 'J2' not in entry and 'T2' in entry:
@@ -866,6 +871,7 @@ def parseInt(string):
 entries = sorted(entries, key=lambda entry: (
     parseInt(entry.get('PY', '')),
     entry['ID'],
+    entry.get('DA', '///'),
     entry.get('J2', ''),
     parseInt(entry.get('VL', '')),
     parseInt(entry.get('SP', '')),
