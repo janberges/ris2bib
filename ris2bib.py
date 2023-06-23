@@ -820,11 +820,15 @@ with open(ris) as infile:
             if 'PB' in entry and entry['PB'] == 'arXiv':
                 entry['TY'] = 'unpublished'
 
-            # Strip protocol/scheme from URL shown as "howpublished":
+            # Extract "howpublished" from URL (or just strip protocol/scheme):
 
             if entry.get('TY') == 'misc' and 'UR' in entry:
-                entry['HP'] = re.sub('^.*?//', '', entry['UR'])
-                entry['HP'] = entry['HP'].replace('/', r'/\allowbreak ')
+                if 'zenodo' in entry['UR'].lower():
+                    entry['HP'] = re.search(r'zenodo.\d+',
+                        entry['UR'].lower()).group(0)
+                else:
+                    entry['HP'] = re.sub('^.*?//', '', entry['UR'])
+                    entry['HP'] = entry['HP'].replace('/', r'/\allowbreak ')
 
             # Prefer DOI or e-print identifier over URL:
 
