@@ -64,8 +64,28 @@ for key, s in re.findall(r'\{([^{}]*?)\}[^{}]*?'
     else:
         outfile.write('<li> %s\n' % s.strip())
 
-outfile.write('''</ul>
+outfile.write('</ul>')
+
+if citekeys:
+    outfile.write('''
+<script>
+    const links = document.getElementsByTagName('a')
+    const bib = document.getElementById('bibliography')
+    const refs = Array.from(bib.children)
+    for (let i = 0; i < links.length; i++) {
+        let href = links[i].getAttribute('href')
+        if (href && href.startsWith('#')) {
+            let ref = document.getElementById(href.substring(1))
+            if (ref && bib.contains(ref)) {
+                links[i].innerText = refs.indexOf(ref) + 1
+            }
+        }
+    }
+</script>''')
+
+outfile.write('''
 </body>
 </html>
 ''')
+
 outfile.close()
