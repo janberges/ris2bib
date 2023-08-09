@@ -3,7 +3,9 @@
 import re
 import sys
 
-bbl, html = sys.argv[1:]
+bbl, html = [arg for arg in sys.argv[1:] if not arg.startswith('-')]
+
+citekeys = '--citekeys' in sys.argv[1:]
 
 with open(bbl) as infile:
     s = infile.read()
@@ -15,10 +17,12 @@ outfile = open(html, 'w')
 outfile.write('''<!DOCTYPE html>
 <html>
 <body>
-<ul>
-''')
+<ul%s>
+''' % (" id='bibliography'" * citekeys))
 
-for s in re.findall(r'\\BibitemOpen(.+?)\\BibitemShut', s, re.DOTALL)[1:]:
+for key, s in re.findall(r'\{([^{}]*?)\}[^{}]*?'
+    r'\\BibitemOpen(.+?)\\BibitemShut', s, re.DOTALL)[1:]:
+
     s = re.sub(r'\n', r' ', s)
     s = re.sub(r'  +', r' ', s)
 
@@ -55,7 +59,10 @@ for s in re.findall(r'\\BibitemOpen(.+?)\\BibitemShut', s, re.DOTALL)[1:]:
     s = re.sub(r'\\"([aeiou])', r'&\1uml;', s, flags=re.I)
     s = re.sub(r'\\allowbreak' + noarg, r'&#x200B;', s)
 
-    outfile.write('<li> %s\n' % s.strip())
+    if citekeys:
+        outfile.write("<li id='%s'> %s\n" % (key, s.strip()))
+    else:
+        outfile.write('<li> %s\n' % s.strip())
 
 outfile.write('''</ul>
 </body>
