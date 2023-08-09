@@ -17,8 +17,8 @@ outfile = open(html, 'w')
 outfile.write('''<!DOCTYPE html>
 <html>
 <body>
-<ul%s>
-''' % (" id='bibliography'" * citekeys))
+<%s>
+''' % ("ol id='bibliography'" if citekeys else 'ul'))
 
 for key, s in re.findall(r'\{([^{}]*?)\}[^{}]*?'
     r'\\BibitemOpen(.+?)\\BibitemShut', s, re.DOTALL)[1:]:
@@ -64,10 +64,8 @@ for key, s in re.findall(r'\{([^{}]*?)\}[^{}]*?'
     else:
         outfile.write('<li> %s\n' % s.strip())
 
-outfile.write('</ul>')
-
 if citekeys:
-    outfile.write('''
+    outfile.write('''</ol>
 <script>
     const links = document.getElementsByTagName('a')
     const bib = document.getElementById('bibliography')
@@ -82,6 +80,8 @@ if citekeys:
         }
     }
 </script>''')
+else:
+    outfile.write('</ul>')
 
 outfile.write('''
 </body>
