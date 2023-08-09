@@ -69,16 +69,17 @@ if citekeys:
 <script>
     const links = document.getElementsByTagName('a')
     const bib = document.getElementById('bibliography')
-    const refs = Array.from(bib.children)
+    const refs = new Array()
     for (let i = 0; i < links.length; i++) {
         let href = links[i].getAttribute('href')
         if (href && href.startsWith('#')) {
             let ref = document.getElementById(href.substring(1))
             if (ref && bib.contains(ref)) {
-                links[i].innerText = refs.indexOf(ref) + 1
+                links[i].innerText = refs.indexOf(ref) + 1 || refs.push(ref)
             }
         }
     }
+    if (refs.length) bib.replaceChildren(...refs)
 </script>''')
 else:
     outfile.write('</ul>')
