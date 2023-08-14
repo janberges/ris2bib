@@ -58,6 +58,8 @@ for key, s in re.findall(r'\{([^{}]*?)\}[^{}]*?'
     s = re.sub(r"\\'([aeiou])", r'&\1acute;', s, flags=re.I)
     s = re.sub(r'\\"([aeiou])', r'&\1uml;', s, flags=re.I)
     s = re.sub(r'\\allowbreak' + noarg, r'&#x200B;', s)
+    s = re.sub(r'\\@' + noarg, r'', s)
+    s = re.sub(r"'", r'&rsquo;', s)
 
     if citekeys:
         outfile.write("<li id='%s'> %s\n" % (key, s.strip()))
