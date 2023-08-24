@@ -17,8 +17,8 @@ _____
 
 ris2bib.py <input file> <output file>
     [--sub=<format string>] [--super=<format string>] [--colcap=<0 or 1>]
-    [--short-year=<0 or 1>] [--skip-a=<0 or 1>] [--arxiv=<0 or 1>]
-    [--nature=<0 or 1>] [--scipost=<0 or 1>] [--etal=<count>]
+    [--nodash=<0 or 1>] [--short-year=<0 or 1>] [--skip-a=<0 or 1>]
+    [--arxiv=<0 or 1>] [--nature=<0 or 1>] [--scipost=<0 or 1>] [--etal=<count>]
 
 The optional arguments --sub and --super specify the markup used to convert
 sub- and superscript Unicode sequences in titles to LaTeX code. The default
@@ -28,6 +28,9 @@ is the placeholder for the replaced sequence. Possible alternative values are
 
 If --colcap=1, words following a colon, e.g., at the beginning of subtitles,
 are capitalized. This is the default.
+
+If --nodash=1, en dashes between words (not numbers) are replaced by simple
+hyphens. The default is --nodash=0.
 
 If --short-year=1, only the last two digits of the year are used for the article
 identifier. The default is --short-year=0.
@@ -65,6 +68,7 @@ except:
 sup = r'\textsuperscript{X}'
 sub = r'\textsubscript{X}'
 colcap = True
+nodash = False
 short_year = False
 skip_a = False
 arxiv = True
@@ -87,6 +91,10 @@ for argument in sys.argv[1:]:
         elif key == '--colcap':
             colcap = bool(int(value))
             print('Capitalize after colon: %s' % colcap)
+
+        elif key == '--nodash':
+            nodash = bool(int(value))
+            print('Replace en dashes by hyphens: %s' % nodash)
 
         elif key == '--short-year':
             short_year = bool(int(value))
@@ -797,6 +805,10 @@ with open(ris) as infile:
             for key in entry:
                 if key not in ('AR', 'DO', 'UR'):
                     entry[key] = escape(entry[key])
+
+                    if nodash:
+                        entry[key] = re.sub(r'(?<=[\D\S])--(?=[\D\S])', '-',
+                            entry[key])
 
             # Ensure that unknown date components are sorted after known ones:
 
