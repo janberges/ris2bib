@@ -84,7 +84,7 @@ for argument in sys.argv[1:]:
             sup = value
             print('Superscript format: %s' % sup)
 
-        elif key == '--colap':
+        elif key == '--colcap':
             colcap = bool(int(value))
             print('Capitalize after colon: %s' % colcap)
 
