@@ -183,7 +183,7 @@ accents = {
     '\u01e7': r'\v{g}',
     '\u2018': '`',
     '\u2019': "'",
-    '\u201c': "``",
+    '\u201c': '``',
     '\u201d': "''",
     }
 
@@ -795,7 +795,7 @@ with open(ris) as infile:
                     entry['M3'] = "Master's thesis"
 
                 elif first == 'd':
-                    entry['M3'] = "Dissertation"
+                    entry['M3'] = 'Dissertation'
 
                 elif first == 'p':
                     pass # "Ph.D. thesis" should be the default
