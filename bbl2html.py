@@ -45,6 +45,8 @@ for key, s in re.findall(r'\{([^{}]*?)\}[^{}]*?'
         groups[n] = re.sub(r'\\emph' + arg, r'<em>\1</em>', groups[n])
         groups[n] = re.sub(r'\\natexlab' + arg, '', groups[n])
         groups[n] = re.sub(r'\\textbf' + arg, r'<b>\1</b>', groups[n])
+        groups[n] = re.sub(r'\\textsc' + arg, r"<span style='font-variant: "
+            r"small-caps'>\1</span>", groups[n])
         groups[n] = re.sub(r'\\textsubscript(\d)', r'&#x208\1;', groups[n])
         groups[n] = re.sub(r'\\textsubscript' + arg, r'<sub>\1</sub>',
             groups[n])
