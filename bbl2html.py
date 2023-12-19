@@ -40,7 +40,7 @@ for key, s in re.findall(r'\{([^{}]*?)\}[^{}]*?'
     for n, group in enumerate(groups):
         groups[n] = re.sub(r'\\bibf?namefont' + arg, r'\1', groups[n])
         groups[n] = re.sub(r'\\bib(info|field)' + 2 * arg, r'\3', groups[n])
-        groups[n] = re.sub(r'\\(Eprint|href)' + 2 * arg, r'<a href="\2">\3</a>',
+        groups[n] = re.sub(r'\\(Eprint|href)' + 2 * arg, r"<a href='\2'>\3</a>",
             groups[n])
         groups[n] = re.sub(r'\\emph' + arg, r'<em>\1</em>', groups[n])
         groups[n] = re.sub(r'\\natexlab' + arg, '', groups[n])
