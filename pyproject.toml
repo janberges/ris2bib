@@ -1,3 +1,20 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
+requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "ris2bib"
+version = "0.1"
+authors = [{name = "Jan Berges"}]
+description = "Convert bibliographies from RIS to BibTeX format"
+readme = "README.md"
+urls = {Homepage = "https://github.com/janberges/ris2bib"}
+classifiers = [
+    "Programming Language :: Python",
+    "License :: Freely Distributable",
+    "Operating System :: POSIX :: Linux",
+]
+requires-python = ">=2.7"
+
+[tool.setuptools]
+script-files = ["ris2bib.py"]
