@@ -25,6 +25,7 @@ for key, s in re.findall(r'\{([^{}]*?)\}[^{}]*?'
 
     s = re.sub(r'\n', r' ', s)
     s = re.sub(r'  +', r' ', s)
+    s = re.sub(r"(?<=\w)'", r'&rsquo;', s)
 
     groups = []
 
@@ -50,6 +51,8 @@ for key, s in re.findall(r'\{([^{}]*?)\}[^{}]*?'
         groups[n] = re.sub(r'\\textsubscript(\d)', r'&#x208\1;', groups[n])
         groups[n] = re.sub(r'\\textsubscript' + arg, r'<sub>\1</sub>',
             groups[n])
+        groups[n] = re.sub(r'\\allowbreak' + noarg, r'&#x200B;', groups[n])
+        groups[n] = re.sub(r'\\@' + noarg, r'', groups[n])
 
     s = groups[-1]
 
@@ -61,9 +64,6 @@ for key, s in re.findall(r'\{([^{}]*?)\}[^{}]*?'
     s = re.sub(r'\\ ', r' ', s)
     s = re.sub(r"\\'([aeiou])", r'&\1acute;', s, flags=re.I)
     s = re.sub(r'\\"([aeiou])', r'&\1uml;', s, flags=re.I)
-    s = re.sub(r'\\allowbreak' + noarg, r'&#x200B;', s)
-    s = re.sub(r'\\@' + noarg, r'', s)
-    s = re.sub(r"'", r'&rsquo;', s)
 
     if citekeys:
         outfile.write("<li id='%s'> %s\n" % (key, s.strip()))
