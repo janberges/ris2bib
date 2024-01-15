@@ -811,7 +811,7 @@ def read(ris):
                     elif first == 'p':
                         pass # "Ph.D. thesis" should be the default
 
-                # Replace non-ASCII Unicode characters by LaTeX escape sequences:
+                # Replace non-ASCII characters by LaTeX escape sequences:
 
                 for key in entry:
                     if key not in ('AR', 'DO', 'UR'):
@@ -821,17 +821,17 @@ def read(ris):
                             entry[key] = re.sub(r'(?<=[\D\S])--(?=[\D\S])', '-',
                                 entry[key])
 
-                # Ensure that unknown date components are sorted after known ones:
+                # Ensure unknown date components are sorted after known ones:
 
                 if 'DA' in entry:
                     entry['DA'] = entry['DA'].replace('/', '\\')
 
-                # Use long journal name (T2) if short journal name (J2) not given:
+                # Use long journal name (T2) if short one (J2) not given:
 
                 if 'J2' not in entry and 'T2' in entry:
                     entry['J2'] = entry.pop('T2')
 
-                # Use type "unpublished" for articles with "arXiv:..." as journal:
+                # Use type "unpublished" for arXiv preprints:
 
                 if 'J2' in entry and entry['J2'].startswith('arXiv'):
                     entry['TY'] = 'unpublished'
@@ -876,7 +876,8 @@ def read(ris):
                     if 'DO' in entry:
                         entry['UR'] = 'https://doi.org/%s' % entry.pop('DO')
                     elif entry.get('AP') == 'arXiv':
-                        entry['UR'] = 'https://arxiv.org/abs/%s' % entry.pop('AR')
+                        entry['UR'] = ('https://arxiv.org/abs/%s'
+                            % entry.pop('AR'))
                         entry.pop('AP')
 
                 elif scipost:
