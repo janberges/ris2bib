@@ -39,21 +39,25 @@ def bbl2tex(s):
 
         yield s
 
-bbl, tex = sys.argv[1:]
+def main():
+    bbl, tex = sys.argv[1:]
 
-with open(bbl) as infile:
-    s = infile.read()
+    with open(bbl) as infile:
+        s = infile.read()
 
-outfile = open(tex, 'w')
-outfile.write(r'''\documentclass{article}
+    outfile = open(tex, 'w')
+    outfile.write(r'''\documentclass{article}
 \usepackage[colorlinks]{hyperref}
 \begin{document}
 \begin{itemize}
 ''')
 
-for s in bbl2tex(s):
-    outfile.write('    \\item %s\n' % s.strip())
+    for s in bbl2tex(s):
+        outfile.write('    \\item %s\n' % s.strip())
 
-outfile.write(r'''\end{itemize}
+    outfile.write(r'''\end{itemize}
 \end{document}''')
-outfile.close()
+    outfile.close()
+
+if __name__ == '__main__':
+    main()

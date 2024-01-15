@@ -54,28 +54,29 @@ def bbl2html(s):
 
         yield (key, s)
 
-bbl, html = [arg for arg in sys.argv[1:] if not arg.startswith('-')]
+def main():
+    bbl, html = [arg for arg in sys.argv[1:] if not arg.startswith('-')]
 
-citekeys = '--citekeys' in sys.argv[1:]
+    citekeys = '--citekeys' in sys.argv[1:]
 
-with open(bbl) as infile:
-    s = infile.read()
+    with open(bbl) as infile:
+        s = infile.read()
 
-outfile = open(html, 'w')
-outfile.write('''<!DOCTYPE html>
+    outfile = open(html, 'w')
+    outfile.write('''<!DOCTYPE html>
 <html>
 <body>
 <%s>
 ''' % ("ol id='bibliography'" if citekeys else 'ul'))
 
-for key, s in bbl2html(s):
-    if citekeys:
-        outfile.write("<li id='%s'> %s\n" % (key, s.strip()))
-    else:
-        outfile.write('<li> %s\n' % s.strip())
+    for key, s in bbl2html(s):
+        if citekeys:
+            outfile.write("<li id='%s'> %s\n" % (key, s.strip()))
+        else:
+            outfile.write('<li> %s\n' % s.strip())
 
-if citekeys:
-    outfile.write('''</ol>
+    if citekeys:
+        outfile.write('''</ol>
 <script>
     const links = document.getElementsByTagName('a')
     const bib = document.getElementById('bibliography')
@@ -91,12 +92,15 @@ if citekeys:
     }
     if (refs.length) bib.replaceChildren(...refs)
 </script>''')
-else:
-    outfile.write('</ul>')
+    else:
+        outfile.write('</ul>')
 
-outfile.write('''
+    outfile.write('''
 </body>
 </html>
 ''')
 
-outfile.close()
+    outfile.close()
+
+if __name__ == '__main__':
+    main()
