@@ -17,36 +17,41 @@ outfile.write(r'''\documentclass{article}
 \begin{itemize}
 ''')
 
-for s in re.findall(r'\\BibitemOpen(.+?)\\BibitemShut', s, re.DOTALL)[1:]:
-    s = re.sub(r'\n', r' ', s)
-    s = re.sub(r'  +', r' ', s)
+def bbl2tex(s):
+    for s in re.findall(r'\\BibitemOpen(.+?)\\BibitemShut', s, re.DOTALL)[1:]:
+        s = re.sub(r'\n', r' ', s)
+        s = re.sub(r'  +', r' ', s)
 
-    groups = []
+        groups = []
 
-    while '{' in s:
-        for group in re.findall(r'\{[^{]*?\}', s):
-            groups.append(group[1:-1])
+        while '{' in s:
+            for group in re.findall(r'\{[^{]*?\}', s):
+                groups.append(group[1:-1])
 
-            replacement = '<#%d>' % len(groups)
-            s = s.replace(group, replacement)
+                replacement = '<#%d>' % len(groups)
+                s = s.replace(group, replacement)
 
-    groups.append(s)
+        groups.append(s)
 
-    for n, group in enumerate(groups):
-        groups[n] = re.sub(r'\\bibf?namefont' + arg, r'\1', groups[n])
-        groups[n] = re.sub(r'\\bib(info|field)' + 2 * arg, r'\3', groups[n])
-        groups[n] = re.sub(r'\\(Eprint|href)' + 2 * arg, r'\\href{\2}{\3}',
-            groups[n])
-        groups[n] = re.sub(r'\\(emph|textbf|textsc)' + arg, r'\\\1{\2}', groups[n])
-        groups[n] = re.sub(r'\\natexlab' + arg, '', groups[n])
+        for n, group in enumerate(groups):
+            groups[n] = re.sub(r'\\bibf?namefont' + arg, r'\1', groups[n])
+            groups[n] = re.sub(r'\\bib(info|field)' + 2 * arg, r'\3', groups[n])
+            groups[n] = re.sub(r'\\(Eprint|href)' + 2 * arg, r'\\href{\2}{\3}',
+                groups[n])
+            groups[n] = re.sub(r'\\(emph|textbf|textsc)' + arg, r'\\\1{\2}',
+                groups[n])
+            groups[n] = re.sub(r'\\natexlab' + arg, '', groups[n])
 
-    s = groups[-1]
+        s = groups[-1]
 
-    for n, group in reversed(list(enumerate(groups, 1))):
-        s = s.replace('<#%d>' % n, group)
+        for n, group in reversed(list(enumerate(groups, 1))):
+            s = s.replace('<#%d>' % n, group)
 
-    s = re.sub(r'\\ ', r' ', s)
+        s = re.sub(r'\\ ', r' ', s)
 
+        yield s
+
+for s in bbl2tex(s):
     outfile.write('    \\item %s\n' % s.strip())
 
 outfile.write(r'''\end{itemize}
