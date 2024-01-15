@@ -65,8 +65,8 @@ except:
 
 # Read optional command-line arguments:
 
-sup = r'\textsuperscript{X}'
-sub = r'\textsubscript{X}'
+sup = r'\textsuperscript{\1}'
+sub = r'\textsubscript{\1}'
 colcap = True
 nodash = False
 short_year = False
@@ -76,55 +76,56 @@ nature = False
 scipost = False
 etal = 0
 
+kwargs = dict()
+
 for argument in sys.argv[1:]:
     if argument.startswith('-') and '=' in argument:
         key, value = argument.split('=')
 
         if key == '--sub':
-            sub = value
-            print('Subscript format: %s' % sub)
+            kwargs['sub'] = value.replace('\\', '\\\\').replace('X', '\\1')
+            print('Subscript format: %(sub)s' % kwargs)
 
         elif key == '--super':
-            sup = value
-            print('Superscript format: %s' % sup)
+            kwargs['sup'] = value.replace('\\', '\\\\').replace('X', '\\1')
+            print('Superscript format: %(sup)s' % kwargs)
 
         elif key == '--colcap':
-            colcap = bool(int(value))
-            print('Capitalize after colon: %s' % colcap)
+            kwargs['colcap'] = bool(int(value))
+            print('Capitalize after colon: %(colcap)s' % kwargs)
 
         elif key == '--nodash':
-            nodash = bool(int(value))
-            print('Replace en dashes by hyphens: %s' % nodash)
+            kwargs['nodash'] = bool(int(value))
+            print('Replace en dashes by hyphens: %(nodash)s' % kwargs)
 
         elif key == '--short-year':
-            short_year = bool(int(value))
-            print('Use short year in identifiers: %s' % short_year)
+            kwargs['short_year'] = bool(int(value))
+            print('Use short year in identifiers: %(short_year)s' % kwargs)
 
         elif key == '--skip-a':
-            skip_a = bool(int(value))
-            print('Omit sublabel a: %s' % skip_a)
+            kwargs['skip_a'] = bool(int(value))
+            print('Omit sublabel a: %(skip_a)s' % kwargs)
 
         elif key == '--arxiv':
-            arxiv = bool(int(value))
-            print('Include eprint identifiers: %s' % arxiv)
+            kwargs['arxiv'] = bool(int(value))
+            print('Include eprint identifiers: %(arxiv)s' % kwargs)
 
         elif key == '--nature':
-            nature = bool(int(value))
-            print('Nature DOI style: %s' % nature)
+            kwargs['nature'] = bool(int(value))
+            print('Nature DOI style: %(nature)s' % kwargs)
 
         elif key == '--scipost':
-            scipost = bool(int(value))
-            print('SciPost eprint style: %s' % scipost)
+            kwargs['scipost'] = bool(int(value))
+            print('SciPost eprint style: %(scipost)s' % kwargs)
 
         elif key == '--etal':
-            etal = int(value)
-            print('Maximum number of listed authors: %d' % etal)
+            kwargs['etal'] = int(value)
+            print('Maximum number of listed authors: %(etal)d' % kwargs)
 
         else:
             print('Unknown argument: %s' % key)
 
-sup = sup.replace('\\', '\\\\').replace('X', '\\1')
-sub = sub.replace('\\', '\\\\').replace('X', '\\1')
+globals().update(**kwargs)
 
 # Data for text replacements:
 
