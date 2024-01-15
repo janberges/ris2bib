@@ -55,15 +55,16 @@ appropriate for APS journals. The default is --etal=0.
 import re
 import sys
 
-# Read input (.ris) and output (.bib) file given as command-line arguments:
+def positional_arguments():
+    """Read input (.ris) and output (.bib) file given as command arguments."""
 
-try:
-    ris, bib = [argument for argument in sys.argv[1:]
-        if not argument.startswith('-')]
-except:
-    raise SystemExit(__doc__)
+    try:
+        ris, bib = [argument for argument in sys.argv[1:]
+            if not argument.startswith('-')]
+    except:
+        raise SystemExit(__doc__)
 
-# Read optional command-line arguments:
+    return ris, bib
 
 sup = r'\textsuperscript{\1}'
 sub = r'\textsubscript{\1}'
@@ -76,56 +77,58 @@ nature = False
 scipost = False
 etal = 0
 
-kwargs = dict()
+def keyword_arguments():
+    """Read optional command-line arguments."""
 
-for argument in sys.argv[1:]:
-    if argument.startswith('-') and '=' in argument:
-        key, value = argument.split('=')
+    kwargs = dict()
 
-        if key == '--sub':
-            kwargs['sub'] = value.replace('\\', '\\\\').replace('X', '\\1')
-            print('Subscript format: %(sub)s' % kwargs)
+    for argument in sys.argv[1:]:
+        if argument.startswith('-') and '=' in argument:
+            key, value = argument.split('=')
+            if key == '--sub':
+                kwargs['sub'] = value.replace('\\', '\\\\').replace('X', '\\1')
+                print('Subscript format: %(sub)s' % kwargs)
 
-        elif key == '--super':
-            kwargs['sup'] = value.replace('\\', '\\\\').replace('X', '\\1')
-            print('Superscript format: %(sup)s' % kwargs)
+            elif key == '--super':
+                kwargs['sup'] = value.replace('\\', '\\\\').replace('X', '\\1')
+                print('Superscript format: %(sup)s' % kwargs)
 
-        elif key == '--colcap':
-            kwargs['colcap'] = bool(int(value))
-            print('Capitalize after colon: %(colcap)s' % kwargs)
+            elif key == '--colcap':
+                kwargs['colcap'] = bool(int(value))
+                print('Capitalize after colon: %(colcap)s' % kwargs)
 
-        elif key == '--nodash':
-            kwargs['nodash'] = bool(int(value))
-            print('Replace en dashes by hyphens: %(nodash)s' % kwargs)
+            elif key == '--nodash':
+                kwargs['nodash'] = bool(int(value))
+                print('Replace en dashes by hyphens: %(nodash)s' % kwargs)
 
-        elif key == '--short-year':
-            kwargs['short_year'] = bool(int(value))
-            print('Use short year in identifiers: %(short_year)s' % kwargs)
+            elif key == '--short-year':
+                kwargs['short_year'] = bool(int(value))
+                print('Use short year in identifiers: %(short_year)s' % kwargs)
 
-        elif key == '--skip-a':
-            kwargs['skip_a'] = bool(int(value))
-            print('Omit sublabel a: %(skip_a)s' % kwargs)
+            elif key == '--skip-a':
+                kwargs['skip_a'] = bool(int(value))
+                print('Omit sublabel a: %(skip_a)s' % kwargs)
 
-        elif key == '--arxiv':
-            kwargs['arxiv'] = bool(int(value))
-            print('Include eprint identifiers: %(arxiv)s' % kwargs)
+            elif key == '--arxiv':
+                kwargs['arxiv'] = bool(int(value))
+                print('Include eprint identifiers: %(arxiv)s' % kwargs)
 
-        elif key == '--nature':
-            kwargs['nature'] = bool(int(value))
-            print('Nature DOI style: %(nature)s' % kwargs)
+            elif key == '--nature':
+                kwargs['nature'] = bool(int(value))
+                print('Nature DOI style: %(nature)s' % kwargs)
 
-        elif key == '--scipost':
-            kwargs['scipost'] = bool(int(value))
-            print('SciPost eprint style: %(scipost)s' % kwargs)
+            elif key == '--scipost':
+                kwargs['scipost'] = bool(int(value))
+                print('SciPost eprint style: %(scipost)s' % kwargs)
 
-        elif key == '--etal':
-            kwargs['etal'] = int(value)
-            print('Maximum number of listed authors: %(etal)d' % kwargs)
+            elif key == '--etal':
+                kwargs['etal'] = int(value)
+                print('Maximum number of listed authors: %(etal)d' % kwargs)
 
-        else:
-            print('Unknown argument: %s' % key)
+            else:
+                print('Unknown argument: %s' % key)
 
-globals().update(**kwargs)
+    globals().update(**kwargs)
 
 # Data for text replacements:
 
@@ -687,255 +690,271 @@ def parseInt(string):
     else:
         return 0
 
-# Read RIS input file:
+def read(ris):
+    """Read RIS input file."""
 
-entries = []
+    entries = []
 
-with open(ris) as infile:
-    text = infile.read()
+    with open(ris) as infile:
+        text = infile.read()
 
-    for block in re.split('\n{2,}', text):
-        entry = dict()
+        for block in re.split('\n{2,}', text):
+            entry = dict()
 
-        for line in re.split('\n', block):
-            parts = re.split('\s*-\s*', line, maxsplit=1)
+            for line in re.split('\n', block):
+                parts = re.split('\s*-\s*', line, maxsplit=1)
 
-            if len(parts) == 2:
-                key, value = parts
-            else:
-                continue
+                if len(parts) == 2:
+                    key, value = parts
+                else:
+                    continue
 
-            if key == 'TY':
-                if value == 'JOUR':
-                    entry['TY'] = 'article'
+                if key == 'TY':
+                    if value == 'JOUR':
+                        entry['TY'] = 'article'
 
-                elif value == 'BOOK':
-                    entry['TY'] = 'book'
+                    elif value == 'BOOK':
+                        entry['TY'] = 'book'
 
-                elif value == 'ELEC':
-                    entry['TY'] = 'electronic'
+                    elif value == 'ELEC':
+                        entry['TY'] = 'electronic'
 
-                elif value == 'CHAP':
-                    entry['TY'] = 'incollection'
+                    elif value == 'CHAP':
+                        entry['TY'] = 'incollection'
 
-                if value == 'THES':
-                    entry['TY'] = 'phdthesis'
+                    if value == 'THES':
+                        entry['TY'] = 'phdthesis'
 
-                elif value == 'COMP':
-                    entry['TY'] = 'misc'
+                    elif value == 'COMP':
+                        entry['TY'] = 'misc'
 
-                elif value == 'RPRT':
-                    entry['TY'] = 'techreport'
+                    elif value == 'RPRT':
+                        entry['TY'] = 'techreport'
 
-            if key in {'AU', 'A2'} and key in entry:
-                entry[key] += ' and ' + value
+                if key in {'AU', 'A2'} and key in entry:
+                    entry[key] += ' and ' + value
 
-            elif key == 'UR' or re.match(r'L\d', key):
-                if key == 'UR':
+                elif key == 'UR' or re.match(r'L\d', key):
+                    if key == 'UR':
+                        entry[key] = value
+
+                    # Try to extract arXiv identifier or DOI from links:
+
+                    if not 'AR' in entry and 'arxiv' in value.lower():
+                        entry['AP'] = 'arXiv'
+                        entry['AR'] = re.search('(abs|pdf)/(.+?)(.pdf|$)',
+                            value).group(2)
+
+                    if not 'DO' in entry and 'doi.org' in value.lower():
+                        entry['DO'] = re.search('doi\.org/(.+?)/?$',
+                            value).group(1)
+
+                    # Handle Materials Cloud Archive records:
+
+                    if 'archive.materialscloud.org' in value.lower():
+                        entry['TY'] = 'article'
+                        entry['J2'] = 'Materials Cloud Archive'
+                        entry['VL'], entry['SP'] = re.search('record/(.+?)/?$',
+                            value).group(1).split('.')
+
+                elif key in search_keys:
                     entry[key] = value
 
-                # Try to extract arXiv identifier or DOI from links:
+            if entry:
+                # Generate entry identifier from first author and year:
 
-                if not 'AR' in entry and 'arxiv' in value.lower():
-                    entry['AP'] = 'arXiv'
-                    entry['AR'] = re.search('(abs|pdf)/(.+?)(.pdf|$)',
-                        value).group(2)
+                entry['ID'] = entry.get('AU', 'Unknown').split(',', 1)[0]
+                entry['ID'] = simplify(entry['ID'])
 
-                if not 'DO' in entry and 'doi.org' in value.lower():
-                    entry['DO'] = re.search('doi\.org/(.+?)/?$',
-                        value).group(1)
-
-                # Handle Materials Cloud Archive records:
-
-                if 'archive.materialscloud.org' in value.lower():
-                    entry['TY'] = 'article'
-                    entry['J2'] = 'Materials Cloud Archive'
-                    entry['VL'], entry['SP'] = re.search('record/(.+?)/?$',
-                        value).group(1).split('.')
-
-            elif key in search_keys:
-                entry[key] = value
-
-        if entry:
-            # Generate entry identifier from first author and year:
-
-            entry['ID'] = entry.get('AU', 'Unknown').split(',', 1)[0]
-            entry['ID'] = simplify(entry['ID'])
-
-            if short_year:
-                entry['ID'] += entry.get('PY', 'XX')[-2:]
-            else:
-                entry['ID'] += entry.get('PY', 'XXXX')
-
-            # Protect (and change) capitalization of titles:
-
-            entry['TI'] = protect(entry['TI'])
-
-            if colcap:
-                entry['TI'] = re.sub('(: [^A-Z0-9\s]*?[a-z])',
-                    lambda x: x.group().upper(), entry['TI'])
-
-            # Remove special spaces from authors and editors:
-
-            for key in 'AU', 'A2':
-                if key in entry:
-                    for space in spaces:
-                        entry[key] = entry[key].replace(space, ' ')
-
-            # Reduce long author lists to first author "and others":
-
-            if etal > 0 and 'AU' in entry:
-                authors = entry['AU'].split(' and ')
-
-                if len(authors) > etal:
-                    entry['AU'] = '%s and others' % authors[0]
-
-            # Distinguish different types of thesis:
-
-            if 'M3' in entry:
-                first = entry.pop('M3')[0].lower()
-
-                if first == 'b':
-                    entry['M3'] = "Bachelor's thesis"
-
-                elif first == 'm':
-                    entry['M3'] = "Master's thesis"
-
-                elif first == 'd':
-                    entry['M3'] = 'Dissertation'
-
-                elif first == 'p':
-                    pass # "Ph.D. thesis" should be the default
-
-            # Replace non-ASCII Unicode characters by LaTeX escape sequences:
-
-            for key in entry:
-                if key not in ('AR', 'DO', 'UR'):
-                    entry[key] = escape(entry[key])
-
-                    if nodash:
-                        entry[key] = re.sub(r'(?<=[\D\S])--(?=[\D\S])', '-',
-                            entry[key])
-
-            # Ensure that unknown date components are sorted after known ones:
-
-            if 'DA' in entry:
-                entry['DA'] = entry['DA'].replace('/', '\\')
-
-            # Use long journal name (T2) if short journal name (J2) not given:
-
-            if 'J2' not in entry and 'T2' in entry:
-                entry['J2'] = entry.pop('T2')
-
-            # Use type "unpublished" for articles with "arXiv:..." as journal:
-
-            if 'J2' in entry and entry['J2'].startswith('arXiv'):
-                entry['TY'] = 'unpublished'
-                entry['AP'] = 'arXiv'
-                entry['AR'] = entry.pop('J2').split()[0].split(':')[1]
-
-            # Use type "unpublished" for articles with "arXiv" as publisher:
-
-            if 'PB' in entry and entry['PB'] == 'arXiv':
-                entry['TY'] = 'unpublished'
-
-            # Strip protocol/scheme from URL shown as "howpublished":
-
-            if entry.get('TY') == 'misc' and 'UR' in entry:
-                entry['HP'] = re.sub('^.*?//', '', entry['UR'])
-                entry['HP'] = entry['HP'].replace('/', r'/\allowbreak ')
-
-            # Prefer DOI or e-print identifier over URL:
-
-            if 'UR' in entry and ('DO' in entry or 'AR' in entry):
-                entry.pop('UR')
-
-            # Prefer eprint identifier of unpublished works over DOI:
-
-            if 'TY' in entry and entry['TY'] == 'unpublished':
-                if 'AR' in entry and 'DO' in entry:
-                    entry.pop('DO')
-
-            # Set default type:
-
-            if 'TY' not in entry:
-                if 'J2' in entry:
-                    entry['TY'] = 'article'
+                if short_year:
+                    entry['ID'] += entry.get('PY', 'XX')[-2:]
                 else:
+                    entry['ID'] += entry.get('PY', 'XXXX')
+
+                # Protect (and change) capitalization of titles:
+
+                entry['TI'] = protect(entry['TI'])
+
+                if colcap:
+                    entry['TI'] = re.sub('(: [^A-Z0-9\s]*?[a-z])',
+                        lambda x: x.group().upper(), entry['TI'])
+
+                # Remove special spaces from authors and editors:
+
+                for key in 'AU', 'A2':
+                    if key in entry:
+                        for space in spaces:
+                            entry[key] = entry[key].replace(space, ' ')
+
+                # Reduce long author lists to first author "and others":
+
+                if etal > 0 and 'AU' in entry:
+                    authors = entry['AU'].split(' and ')
+
+                    if len(authors) > etal:
+                        entry['AU'] = '%s and others' % authors[0]
+
+                # Distinguish different types of thesis:
+
+                if 'M3' in entry:
+                    first = entry.pop('M3')[0].lower()
+
+                    if first == 'b':
+                        entry['M3'] = "Bachelor's thesis"
+
+                    elif first == 'm':
+                        entry['M3'] = "Master's thesis"
+
+                    elif first == 'd':
+                        entry['M3'] = 'Dissertation'
+
+                    elif first == 'p':
+                        pass # "Ph.D. thesis" should be the default
+
+                # Replace non-ASCII Unicode characters by LaTeX escape sequences:
+
+                for key in entry:
+                    if key not in ('AR', 'DO', 'UR'):
+                        entry[key] = escape(entry[key])
+
+                        if nodash:
+                            entry[key] = re.sub(r'(?<=[\D\S])--(?=[\D\S])', '-',
+                                entry[key])
+
+                # Ensure that unknown date components are sorted after known ones:
+
+                if 'DA' in entry:
+                    entry['DA'] = entry['DA'].replace('/', '\\')
+
+                # Use long journal name (T2) if short journal name (J2) not given:
+
+                if 'J2' not in entry and 'T2' in entry:
+                    entry['J2'] = entry.pop('T2')
+
+                # Use type "unpublished" for articles with "arXiv:..." as journal:
+
+                if 'J2' in entry and entry['J2'].startswith('arXiv'):
+                    entry['TY'] = 'unpublished'
+                    entry['AP'] = 'arXiv'
+                    entry['AR'] = entry.pop('J2').split()[0].split(':')[1]
+
+                # Use type "unpublished" for articles with "arXiv" as publisher:
+
+                if 'PB' in entry and entry['PB'] == 'arXiv':
                     entry['TY'] = 'unpublished'
 
-                print('Unknown type (set to "%(TY)s"): %(ID)s' % entry)
+                # Strip protocol/scheme from URL shown as "howpublished":
 
-            # Consider journal-specific bibliography style files:
+                if entry.get('TY') == 'misc' and 'UR' in entry:
+                    entry['HP'] = re.sub('^.*?//', '', entry['UR'])
+                    entry['HP'] = entry['HP'].replace('/', r'/\allowbreak ')
 
-            if nature:
-                if 'DO' in entry:
-                    entry['UR'] = 'https://doi.org/%s' % entry.pop('DO')
-                elif entry.get('AP') == 'arXiv':
-                    entry['UR'] = 'https://arxiv.org/abs/%s' % entry.pop('AR')
-                    entry.pop('AP')
+                # Prefer DOI or e-print identifier over URL:
 
-            elif scipost:
-                if entry.get('AP') == 'arXiv':
-                    entry['AR'] = 'https://arxiv.org/abs/%s' % entry['AR']
-                    entry.pop('AP')
+                if 'UR' in entry and ('DO' in entry or 'AR' in entry):
+                    entry.pop('UR')
 
-                if entry.get('TY') == 'unpublished':
-                    entry['TY'] = 'misc'
+                # Prefer eprint identifier of unpublished works over DOI:
 
-            # Remove arXiv identifier:
+                if 'TY' in entry and entry['TY'] == 'unpublished':
+                    if 'AR' in entry and 'DO' in entry:
+                        entry.pop('DO')
 
-            if not arxiv:
-                if entry.get('TY') not in {'misc', 'unpublished'}:
-                    for key in 'AP', 'AR':
-                        entry.pop(key, None)
+                # Set default type:
 
-            entries.append(entry)
+                if 'TY' not in entry:
+                    if 'J2' in entry:
+                        entry['TY'] = 'article'
+                    else:
+                        entry['TY'] = 'unpublished'
 
-# Sort entries:
+                    print('Unknown type (set to "%(TY)s"): %(ID)s' % entry)
 
-entries = sorted(entries, key=lambda entry: (
-    parseInt(entry.get('PY', '')),
-    entry['ID'],
-    entry.get('DA', '///'),
-    entry.get('J2', ''),
-    parseInt(entry.get('VL', '')),
-    parseInt(entry.get('SP', '')),
-    entry.get('TI', ''),
-    ))
+                # Consider journal-specific bibliography style files:
 
-# Add suffices non-unique identifiers:
+                if nature:
+                    if 'DO' in entry:
+                        entry['UR'] = 'https://doi.org/%s' % entry.pop('DO')
+                    elif entry.get('AP') == 'arXiv':
+                        entry['UR'] = 'https://arxiv.org/abs/%s' % entry.pop('AR')
+                        entry.pop('AP')
 
-labels = 'abcdefghijklmnopqrstuvwxyz'
+                elif scipost:
+                    if entry.get('AP') == 'arXiv':
+                        entry['AR'] = 'https://arxiv.org/abs/%s' % entry['AR']
+                        entry.pop('AP')
 
-if skip_a:
-    labels = [''] + [label for label in labels[1:]]
+                    if entry.get('TY') == 'unpublished':
+                        entry['TY'] = 'misc'
 
-n = 0
-while n < len(entries):
-    n0 = n
-    while n < len(entries) and entries[n]['ID'] == entries[n0]['ID']:
-        n += 1
+                # Remove arXiv identifier:
 
-    if len(entries[n0:n]) > 1:
-        for label, entry in zip(labels, entries[n0:n]):
-            entry['ID'] += label
+                if not arxiv:
+                    if entry.get('TY') not in {'misc', 'unpublished'}:
+                        for key in 'AP', 'AR':
+                            entry.pop(key, None)
 
-            print('Sublabel: %s' % entry['ID'])
+                entries.append(entry)
 
-# Write BibTeX output file:
+    # Sort entries:
 
-with open(bib, 'w') as outfile:
-    for entry in entries:
-        length = max(len(name) for name, key in types[entry['TY']]
-            if key in entry)
+    entries = sorted(entries, key=lambda entry: (
+        parseInt(entry.get('PY', '')),
+        entry['ID'],
+        entry.get('DA', '///'),
+        entry.get('J2', ''),
+        parseInt(entry.get('VL', '')),
+        parseInt(entry.get('SP', '')),
+        entry.get('TI', ''),
+        ))
 
-        form = '%%%ds = {%%s},\n' % length
+    # Add suffices non-unique identifiers:
 
-        outfile.write('@%s{%s,\n' % (entry['TY'], entry['ID']))
+    labels = 'abcdefghijklmnopqrstuvwxyz'
 
-        for name, key in types[entry['TY']]:
-            if key in entry:
-                outfile.write(form % (name, entry[key]))
+    if skip_a:
+        labels = [''] + [label for label in labels[1:]]
 
-        outfile.write('}\n')
+    n = 0
+    while n < len(entries):
+        n0 = n
+        while n < len(entries) and entries[n]['ID'] == entries[n0]['ID']:
+            n += 1
+
+        if len(entries[n0:n]) > 1:
+            for label, entry in zip(labels, entries[n0:n]):
+                entry['ID'] += label
+
+                print('Sublabel: %s' % entry['ID'])
+
+    return entries
+
+def write(bib, entries):
+    """Write BibTeX output file."""
+
+    with open(bib, 'w') as outfile:
+        for entry in entries:
+            length = max(len(name) for name, key in types[entry['TY']]
+                if key in entry)
+
+            form = '%%%ds = {%%s},\n' % length
+
+            outfile.write('@%s{%s,\n' % (entry['TY'], entry['ID']))
+
+            for name, key in types[entry['TY']]:
+                if key in entry:
+                    outfile.write(form % (name, entry[key]))
+
+            outfile.write('}\n')
+
+def main():
+    ris, bib = positional_arguments()
+
+    keyword_arguments()
+
+    entries = read(ris)
+
+    write(bib, entries)
+
+if __name__ == '__main__':
+    main()
