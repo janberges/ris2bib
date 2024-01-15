@@ -3,21 +3,9 @@
 import re
 import sys
 
-bbl, tex = sys.argv[1:]
-
-with open(bbl) as infile:
-    s = infile.read()
-
-arg = r' *(<#\d+>|\d| \S)'
-
-outfile = open(tex, 'w')
-outfile.write(r'''\documentclass{article}
-\usepackage[colorlinks]{hyperref}
-\begin{document}
-\begin{itemize}
-''')
-
 def bbl2tex(s):
+    arg = r' *(<#\d+>|\d| \S)'
+
     for s in re.findall(r'\\BibitemOpen(.+?)\\BibitemShut', s, re.DOTALL)[1:]:
         s = re.sub(r'\n', r' ', s)
         s = re.sub(r'  +', r' ', s)
@@ -50,6 +38,18 @@ def bbl2tex(s):
         s = re.sub(r'\\ ', r' ', s)
 
         yield s
+
+bbl, tex = sys.argv[1:]
+
+with open(bbl) as infile:
+    s = infile.read()
+
+outfile = open(tex, 'w')
+outfile.write(r'''\documentclass{article}
+\usepackage[colorlinks]{hyperref}
+\begin{document}
+\begin{itemize}
+''')
 
 for s in bbl2tex(s):
     outfile.write('    \\item %s\n' % s.strip())

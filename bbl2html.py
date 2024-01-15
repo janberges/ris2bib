@@ -3,24 +3,10 @@
 import re
 import sys
 
-bbl, html = [arg for arg in sys.argv[1:] if not arg.startswith('-')]
-
-citekeys = '--citekeys' in sys.argv[1:]
-
-with open(bbl) as infile:
-    s = infile.read()
-
-arg = r' *(<#\d+>|\d| \S)'
-noarg = ' *({})?'
-
-outfile = open(html, 'w')
-outfile.write('''<!DOCTYPE html>
-<html>
-<body>
-<%s>
-''' % ("ol id='bibliography'" if citekeys else 'ul'))
-
 def bbl2html(s):
+    arg = r' *(<#\d+>|\d| \S)'
+    noarg = ' *({})?'
+
     for key, s in re.findall(r'\{([^{}]*?)\}[^{}]*?'
         r'\\BibitemOpen(.+?)\\BibitemShut', s, re.DOTALL)[1:]:
 
@@ -67,6 +53,20 @@ def bbl2html(s):
         s = re.sub(r'\\"([aeiou])', r'&\1uml;', s, flags=re.I)
 
         yield (key, s)
+
+bbl, html = [arg for arg in sys.argv[1:] if not arg.startswith('-')]
+
+citekeys = '--citekeys' in sys.argv[1:]
+
+with open(bbl) as infile:
+    s = infile.read()
+
+outfile = open(html, 'w')
+outfile.write('''<!DOCTYPE html>
+<html>
+<body>
+<%s>
+''' % ("ol id='bibliography'" if citekeys else 'ul'))
 
 for key, s in bbl2html(s):
     if citekeys:
