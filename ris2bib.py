@@ -859,6 +859,16 @@ with open(ris) as infile:
                 if 'AR' in entry and 'DO' in entry:
                     entry.pop('DO')
 
+            # Set default type:
+
+            if 'TY' not in entry:
+                if 'J2' in entry:
+                    entry['TY'] = 'article'
+                else:
+                    entry['TY'] = 'unpublished'
+
+                print('Unknown type (set to "%(TY)s"): %(ID)s' % entry)
+
             # Consider journal-specific bibliography style files:
 
             if nature:
@@ -913,14 +923,6 @@ while n < len(entries):
 
 with open(bib, 'w') as outfile:
     for entry in entries:
-        if 'TY' not in entry:
-            if 'J2' in entry:
-                entry['TY'] = 'article'
-            else:
-                entry['TY'] = 'unpublished'
-
-            print('Unknown type (set to "%(TY)s"): %(ID)s' % entry)
-
         length = max(len(name) for name, key in types[entry['TY']]
             if key in entry)
 
