@@ -15,7 +15,15 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
 ]
 requires-python = ">=2.7"
-scripts = {ris2bib = "ris2bib:main"}
+
+[project.scripts]
+ris2bib = "ris2bib:main"
+bbl2html = "bbl2html:main"
+bbl2tex = "bbl2tex:main"
 
 [tool.setuptools]
-py-modules = ['ris2bib']
+py-modules = [
+    'ris2bib',
+    'bbl2html',
+    'bbl2tex',
+    ]
