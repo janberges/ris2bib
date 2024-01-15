@@ -680,6 +680,16 @@ def escape(s):
 
     return s
 
+def parseInt(string):
+    """Parse string as integer, ignoring all non-numbers."""
+
+    number = ''.join(c for c in string if 48 <= ord(c) <= 57)
+
+    if number:
+        return int(number)
+    else:
+        return 0
+
 # Read RIS input file:
 
 entries = []
@@ -867,16 +877,6 @@ with open(ris) as infile:
                     entry['TY'] = 'misc'
 
             entries.append(entry)
-
-def parseInt(string):
-    """Parse string as integer, ignoring all non-numbers."""
-
-    number = ''.join(c for c in string if 48 <= ord(c) <= 57)
-
-    if number:
-        return int(number)
-    else:
-        return 0
 
 # Sort entries:
 
