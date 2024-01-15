@@ -66,17 +66,6 @@ def positional_arguments():
 
     return ris, bib
 
-sup = r'\textsuperscript{\1}'
-sub = r'\textsubscript{\1}'
-colcap = True
-nodash = False
-short_year = False
-skip_a = False
-arxiv = True
-nature = False
-scipost = False
-etal = 0
-
 def keyword_arguments():
     """Read optional command-line arguments."""
 
@@ -128,7 +117,7 @@ def keyword_arguments():
             else:
                 print('Unknown argument: %s' % key)
 
-    globals().update(**kwargs)
+    return kwargs
 
 # Data for text replacements:
 
@@ -632,7 +621,7 @@ def protect(s):
 
     return s
 
-def escape(s):
+def escape(s, sup=r'\textsuperscript{\1}', sub=r'\textsubscript{\1}'):
     """Replace non-ASCII Unicode characters by LaTeX escape sequences."""
 
     # Add markup to ranges of certain characters:
@@ -690,7 +679,9 @@ def parseInt(string):
     else:
         return 0
 
-def read(ris):
+def read(ris, sup=r'\textsuperscript{\1}', sub=r'\textsubscript{\1}',
+        colcap=True, nodash=False, short_year=False, skip_a=False, arxiv=True,
+        nature=False, scipost=False, etal=0):
     """Read RIS input file."""
 
     entries = []
@@ -815,7 +806,7 @@ def read(ris):
 
                 for key in entry:
                     if key not in ('AR', 'DO', 'UR'):
-                        entry[key] = escape(entry[key])
+                        entry[key] = escape(entry[key], sup, sub)
 
                         if nodash:
                             entry[key] = re.sub(r'(?<=[\D\S])--(?=[\D\S])', '-',
@@ -951,9 +942,9 @@ def write(bib, entries):
 def main():
     ris, bib = positional_arguments()
 
-    keyword_arguments()
+    kwargs = keyword_arguments()
 
-    entries = read(ris)
+    entries = read(ris, **kwargs)
 
     write(bib, entries)
 
