@@ -478,13 +478,9 @@ for key, value in types.items():
     value.extend([
         ('url', 'UR'),
         ('doi', 'DO'),
+        ('archiveprefix', 'AP'),
+        ('eprint', 'AR'),
         ])
-
-    if arxiv or key in {'misc', 'unpublished'}:
-        value.extend([
-            ('archiveprefix', 'AP'),
-            ('eprint', 'AR'),
-            ])
 
 search_keys = set(ris_key
     for value in types.values()
@@ -885,6 +881,13 @@ with open(ris) as infile:
 
                 if entry.get('TY') == 'unpublished':
                     entry['TY'] = 'misc'
+
+            # Remove arXiv identifier:
+
+            if not arxiv:
+                if entry.get('TY') not in {'misc', 'unpublished'}:
+                    for key in 'AP', 'AR':
+                        entry.pop(key, None)
 
             entries.append(entry)
 
