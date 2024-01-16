@@ -876,6 +876,10 @@ def read(ris, sup=r'\textsuperscript{\1}', sub=r'\textsubscript{\1}',
                         entry['AR'] = 'https://arxiv.org/abs/%s' % entry['AR']
                         entry.pop('AP')
 
+                    if all('zenodo' in entry.get(key, '').lower()
+                            for key in ['HP', 'DO']):
+                        entry.pop('HP')
+
                     if entry.get('TY') == 'unpublished':
                         entry['TY'] = 'misc'
 
