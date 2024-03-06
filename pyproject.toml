@@ -10,11 +10,11 @@ description = "Convert bibliographies from RIS to BibTeX format"
 readme = "README.md"
 urls = {Homepage = "https://github.com/janberges/ris2bib"}
 classifiers = [
-    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
     "License :: Freely Distributable",
     "Operating System :: POSIX :: Linux",
 ]
-requires-python = ">=2.7"
+requires-python = ">=3.5"
 
 [project.scripts]
 ris2bib = "ris2bib:main"
