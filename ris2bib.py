@@ -195,7 +195,7 @@ simplifications = {
 
 spaces = {
     '\u00a0': '~',
-    '\u2009': '\,',
+    '\u2009': r'\,',
     }
 
 quotes = {
@@ -313,7 +313,7 @@ math = {
     }
 
 math_any = ''.join(math.keys())
-math_range = '(([{0}\d][{0}\d\sx]*)?[{0}]+([{0}\d\sx]*[{0}\d])?)'.format(
+math_range = r'(([{0}\d][{0}\d\sx]*)?[{0}]+([{0}\d\sx]*[{0}\d])?)'.format(
     math_any)
 
 others = {
@@ -557,7 +557,7 @@ def fragile(token, previous=None):
 
         # Token follows on period:
 
-        if re.search('\.', previous):
+        if re.search(r'\.', previous):
                 return True
 
     return False
@@ -597,7 +597,7 @@ def protect(s):
 
     # Split string into tokens:
 
-    separator = ' \\-.:,;()\[\]/' + ''.join(spaces) + ''.join(dashes)
+    separator = r' \-.:,;()\[\]/' + ''.join(spaces) + ''.join(dashes)
 
     tokens = re.findall('[{0}]+|[^{0}]+'.format(separator), s)
 
@@ -693,7 +693,7 @@ def read(ris, sup=r'\textsuperscript{\1}', sub=r'\textsubscript{\1}',
             entry = dict()
 
             for line in re.split('\n', block):
-                parts = re.split('\s*-\s*', line, maxsplit=1)
+                parts = re.split(r'\s*-\s*', line, maxsplit=1)
 
                 if len(parts) == 2:
                     key, value = parts
@@ -737,7 +737,7 @@ def read(ris, sup=r'\textsuperscript{\1}', sub=r'\textsubscript{\1}',
                             value).group(2)
 
                     if not 'DO' in entry and 'doi.org' in value.lower():
-                        entry['DO'] = re.search('doi\.org/(.+?)/?$',
+                        entry['DO'] = re.search(r'doi\.org/(.+?)/?$',
                             value).group(1)
 
                     # Handle Materials Cloud Archive records:
@@ -767,7 +767,7 @@ def read(ris, sup=r'\textsuperscript{\1}', sub=r'\textsubscript{\1}',
                 entry['TI'] = protect(entry['TI'])
 
                 if colcap:
-                    entry['TI'] = re.sub('(: [^A-Z0-9\s]*?[a-z])',
+                    entry['TI'] = re.sub(r'(: [^A-Z0-9\s]*?[a-z])',
                         lambda x: x.group().upper(), entry['TI'])
 
                 # Remove special spaces from authors and editors:
