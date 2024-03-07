@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from ris2bib import __version__
+
 import re
 import sys
 
