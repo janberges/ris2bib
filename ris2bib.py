@@ -52,6 +52,8 @@ with more authors are reduced to the first author "and others". --etal=15 is
 appropriate for APS journals. The default is --etal=0.
 """
 
+__version__ = '0.1'
+
 import re
 import sys
 

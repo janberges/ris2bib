@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ris2bib"
-version = "0.1"
+dynamic = ["version"]
 authors = [{name = "Jan Berges"}]
 description = "Convert bibliographies from RIS to BibTeX format"
 readme = "README.md"
@@ -21,6 +21,7 @@ bbl2html = "bbl2html:main"
 bbl2tex = "bbl2tex:main"
 
 [tool.setuptools]
+dynamic = {version = {attr = "ris2bib.__version__"}}
 py-modules = [
     'ris2bib',
     'bbl2html',
