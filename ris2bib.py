@@ -77,11 +77,11 @@ def keyword_arguments():
         if argument.startswith('-') and '=' in argument:
             key, value = argument.split('=')
             if key == '--sub':
-                kwargs['sub'] = value.replace('\\', '\\\\').replace('X', '\\1')
+                kwargs['sub'] = value
                 print('Subscript format: %(sub)s' % kwargs)
 
             elif key == '--super':
-                kwargs['sup'] = value.replace('\\', '\\\\').replace('X', '\\1')
+                kwargs['sup'] = value
                 print('Superscript format: %(sup)s' % kwargs)
 
             elif key == '--colcap':
@@ -623,10 +623,13 @@ def protect(s):
 
     return s
 
-def escape(s, sup=r'\textsuperscript{\1}', sub=r'\textsubscript{\1}'):
+def escape(s, sup=r'\textsuperscript{X}', sub=r'\textsubscript{X}'):
     """Replace non-ASCII Unicode characters by LaTeX escape sequences."""
 
     # Add markup to ranges of certain characters:
+
+    sup = sup.replace('\\', '\\\\').replace('X', '\\1')
+    sub = sub.replace('\\', '\\\\').replace('X', '\\1')
 
     s = re.sub(superscripts_range, sup, s)
     s = re.sub(subscripts_range, sub, s)
@@ -681,7 +684,7 @@ def parseInt(string):
     else:
         return 0
 
-def read(ris, sup=r'\textsuperscript{\1}', sub=r'\textsubscript{\1}',
+def read(ris, sup=r'\textsuperscript{X}', sub=r'\textsubscript{X}',
         colcap=True, nodash=False, short_year=False, skip_a=False, arxiv=True,
         nature=False, scipost=False, etal=0):
     """Read RIS input file."""
