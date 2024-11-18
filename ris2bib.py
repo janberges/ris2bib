@@ -694,7 +694,7 @@ def read(ris, sup=r'\textsuperscript{X}', sub=r'\textsubscript{X}',
     with open(ris) as infile:
         text = infile.read()
 
-        for block in re.split('\n{2,}', text):
+        for block in re.split('\nER\s*-\s*', text):
             entry = dict()
 
             for line in re.split('\n', block):
