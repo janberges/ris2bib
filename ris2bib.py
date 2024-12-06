@@ -839,11 +839,14 @@ def read(ris, sup=r'\textsuperscript{X}', sub=r'\textsubscript{X}',
                 if 'PB' in entry and entry['PB'] == 'arXiv':
                     entry['TY'] = 'unpublished'
 
-                # Strip protocol/scheme from URL shown as "howpublished":
+                # Extract "howpublished" from URL (or just strip protocol):
 
                 if entry.get('TY') == 'misc' and 'UR' in entry:
-                    entry['HP'] = re.sub('^.*?//', '', entry['UR'])
-                    entry['HP'] = entry['HP'].replace('/', r'/\allowbreak ')
+                    if 'zenodo' in entry['UR'].lower():
+                        entry['HP'] = 'Zenodo'
+                    else:
+                        entry['HP'] = re.sub('^.*?//', '', entry['UR'])
+                        entry['HP'] = entry['HP'].replace('/', r'/\allowbreak ')
 
                 # Prefer DOI or e-print identifier over URL:
 
