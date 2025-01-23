@@ -904,8 +904,8 @@ def read(ris, sup=r'\textsuperscript{X}', sub=r'\textsubscript{X}',
 
     entries = sorted(entries, key=lambda entry: (
         parseInt(entry.get('PY', '')),
-        entry['ID'],
         entry.get('DA', '///'),
+        entry['ID'],
         entry.get('J2', ''),
         parseInt(entry.get('VL', '')),
         parseInt(entry.get('SP', '')),
