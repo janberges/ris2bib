@@ -51,8 +51,9 @@ def bbl2html(s):
         s = re.sub(r'--', r'&ndash;', s)
         s = re.sub(r'~', r'&nbsp;', s)
         s = re.sub(r'\\ ', r' ', s)
-        s = re.sub(r"\\'([aeiou])", r'&\1acute;', s, flags=re.I)
+        s = re.sub(r"\\'([acegilnorsuyz])", r'&\1acute;', s, flags=re.I)
         s = re.sub(r'\\"([aeiou])', r'&\1uml;', s, flags=re.I)
+        s = re.sub(r'\\v([cdelnrstz])', r'&\1caron;', s, flags=re.I)
 
         yield (key, s)
 
