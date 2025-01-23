@@ -5,7 +5,7 @@ from ris2bib import __version__
 import re
 import sys
 
-def bbl2html(s):
+def bbl2html(s, md=False):
     arg = r' *(<#\d+>|\d| \S)'
     noarg = ' *({})?'
 
@@ -31,10 +31,12 @@ def bbl2html(s):
             groups[n] = re.sub(r'\\bibf?namefont' + arg, r'\1', groups[n])
             groups[n] = re.sub(r'\\bib(info|field)' + 2 * arg, r'\3', groups[n])
             groups[n] = re.sub(r'\\(Eprint|href)' + 2 * arg,
-                r"<a href='\2'>\3</a>", groups[n])
-            groups[n] = re.sub(r'\\emph' + arg, r'<em>\1</em>', groups[n])
+                r'[\3](\2)' if md else r"<a href='\2'>\3</a>", groups[n])
+            groups[n] = re.sub(r'\\emph' + arg,
+                r'*\1*' if md else r'<em>\1</em>', groups[n])
             groups[n] = re.sub(r'\\natexlab' + arg, '', groups[n])
-            groups[n] = re.sub(r'\\textbf' + arg, r'<b>\1</b>', groups[n])
+            groups[n] = re.sub(r'\\textbf' + arg,
+                r'**\1**' if md else r'<b>\1</b>', groups[n])
             groups[n] = re.sub(r'\\textsc' + arg, r"<span style='font-variant: "
                 r"small-caps'>\1</span>", groups[n])
             groups[n] = re.sub(r'\\textsubscript(\d)', r'&#x208\1;', groups[n])
@@ -49,7 +51,7 @@ def bbl2html(s):
             s = s.replace('<#%d>' % n, group)
 
         s = re.sub(r'--', r'&ndash;', s)
-        s = re.sub(r'~', r'&nbsp;', s)
+        s = re.sub(r'~', ' ' if md else r'&nbsp;', s)
         s = re.sub(r'\\ ', r' ', s)
         s = re.sub(r"\\'([acegilnorsuyz])", r'&\1acute;', s, flags=re.I)
         s = re.sub(r'\\"([aeiou])', r'&\1uml;', s, flags=re.I)
@@ -60,21 +62,26 @@ def bbl2html(s):
 def main():
     bbl, html = [arg for arg in sys.argv[1:] if not arg.startswith('-')]
 
-    citekeys = '--citekeys' in sys.argv[1:]
+    markdown = '--markdown' in sys.argv[1:]
+    citekeys = '--citekeys' in sys.argv[1:] and not markdown
 
     with open(bbl) as infile:
         s = infile.read()
 
     outfile = open(html, 'w')
-    outfile.write('''<!DOCTYPE html>
+
+    if not markdown:
+        outfile.write('''<!DOCTYPE html>
 <html>
 <body>
 <%s>
 ''' % ("ol id='bibliography'" if citekeys else 'ul'))
 
-    for key, s in bbl2html(s):
+    for key, s in bbl2html(s, markdown):
         if citekeys:
             outfile.write("<li id='%s'> %s\n" % (key, s.strip()))
+        elif markdown:
+            outfile.write('* %s\n' % s.strip())
         else:
             outfile.write('<li> %s\n' % s.strip())
 
@@ -95,10 +102,11 @@ def main():
     }
     if (refs.length) bib.replaceChildren(...refs)
 </script>''')
-    else:
+    elif not markdown:
         outfile.write('</ul>')
 
-    outfile.write('''
+    if not markdown:
+        outfile.write('''
 </body>
 </html>
 ''')
