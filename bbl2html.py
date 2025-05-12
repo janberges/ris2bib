@@ -10,7 +10,7 @@ def bbl2html(s, md=False):
     noarg = ' *({})?'
 
     for key, s in re.findall(r'\{([^{}]*?)\}[^{}]*?'
-        r'\\BibitemOpen(.+?)\\BibitemShut', s, re.DOTALL)[1:]:
+            r'\\BibitemOpen(.+?)\\BibitemShut', s, re.DOTALL)[1:]:
 
         s = re.sub(r'\n', r' ', s)
         s = re.sub(r'  +', r' ', s)

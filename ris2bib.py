@@ -63,7 +63,7 @@ def positional_arguments():
     try:
         ris, bib = [argument for argument in sys.argv[1:]
             if not argument.startswith('-')]
-    except:
+    except ValueError:
         raise SystemExit(__doc__)
 
     return ris, bib
@@ -560,7 +560,7 @@ def fragile(token, previous=None):
         # Token follows on period:
 
         if re.search(r'\.', previous):
-                return True
+            return True
 
     return False
 
@@ -694,10 +694,10 @@ def read(ris, sup=r'\textsuperscript{X}', sub=r'\textsubscript{X}',
     with open(ris) as infile:
         text = infile.read()
 
-        for block in re.split('\nER\s*-\s*', text):
+        for block in re.split(r'\nER\s*-\s*', text):
             entry = dict()
 
-            for line in re.split('\n', block):
+            for line in re.split(r'\n', block):
                 parts = re.split(r'\s*-\s*', line, maxsplit=1)
 
                 if len(parts) == 2:
@@ -736,12 +736,12 @@ def read(ris, sup=r'\textsuperscript{X}', sub=r'\textsubscript{X}',
 
                     # Try to extract arXiv identifier or DOI from links:
 
-                    if not 'AR' in entry and 'arxiv' in value.lower():
+                    if 'AR' not in entry and 'arxiv' in value.lower():
                         entry['AP'] = 'arXiv'
                         entry['AR'] = re.search('(abs|pdf)/(.+?)(.pdf|$)',
                             value).group(2)
 
-                    if not 'DO' in entry and 'doi.org' in value.lower():
+                    if 'DO' not in entry and 'doi.org' in value.lower():
                         entry['DO'] = re.search(r'doi\.org/(.+?)/?$',
                             value).group(1)
 
