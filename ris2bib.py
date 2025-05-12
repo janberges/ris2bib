@@ -180,30 +180,30 @@ accents = {
     '\u2019': "'",
     '\u201c': '``',
     '\u201d': "''",
-    }
+}
 
 dashes = {
     '\u2010': '-', # unbreakable
     '\u2013': '--',
     '\u2014': '---',
-    }
+}
 
 accents.update(dashes)
 
 simplifications = {
     key: value.replace('}', '')[-1]
     for key, value in accents.items()
-    }
+}
 
 spaces = {
     '\u00a0': '~',
     '\u2009': r'\,',
-    }
+}
 
 quotes = {
     '\u00ab': r'{\guillemotleft}',
     '\u00bb': r'{\guillemotright}',
-    }
+}
 
 superscripts = {
     '\u00b2': '2',
@@ -223,7 +223,7 @@ superscripts = {
     '\u207d': '(',
     '\u207e': ')',
     '\u207f': 'n',
-    }
+}
 
 superscripts_any = ''.join(superscripts.keys())
 superscripts_range = '([{0}]+)'.format(superscripts_any)
@@ -257,7 +257,7 @@ subscripts = {
     '\u209a': 'p',
     '\u209b': 's',
     '\u209c': 't',
-    }
+}
 
 subscripts_any = ''.join(subscripts.keys())
 subscripts_range = '([{0}]+([{0}.,]+[{0}])?)'.format(subscripts_any)
@@ -312,7 +312,7 @@ math = {
     '\u221e': r'\infty',
     '\u223c': r'\sim',
     '\u2264': r'\leq',
-    }
+}
 
 math_any = ''.join(math.keys())
 math_range = r'(([{0}\d][{0}\d\sx]*)?[{0}]+([{0}\d\sx]*[{0}\d])?)'.format(
@@ -321,7 +321,7 @@ math_range = r'(([{0}\d][{0}\d\sx]*)?[{0}]+([{0}\d\sx]*[{0}\d])?)'.format(
 others = {
     '&': r'\&',
     '\u00ad': r'\-',
-    }
+}
 
 names = {
     'Bethe',
@@ -391,7 +391,7 @@ names = {
     'Wick',
     'Wigner',
     'Yosida',
-    }
+}
 
 elements = set('''
     H                                                  He
@@ -418,12 +418,12 @@ types = dict(
         ('volume', 'VL'),
         ('pages', 'SP'),
         ('year', 'PY'),
-        ],
+    ],
     unpublished=[
         ('author', 'AU'),
         ('title', 'TI'),
         ('year', 'PY'),
-        ],
+    ],
     book=[
         ('author', 'AU'),
         ('title', 'TI'),
@@ -431,12 +431,12 @@ types = dict(
         ('publisher', 'PB'),
         ('address', 'CY'),
         ('year', 'PY'),
-        ],
+    ],
     electronic=[
         ('author', 'AU'),
         ('title', 'TI'),
         ('urldate', 'Y2'),
-        ],
+    ],
     incollection=[
         ('author', 'AU'),
         ('title', 'TI'),
@@ -447,27 +447,27 @@ types = dict(
         ('publisher', 'PB'),
         ('address', 'CY'),
         ('year', 'PY'),
-        ],
+    ],
     phdthesis=[
         ('author', 'AU'),
         ('title', 'TI'),
         ('type', 'M3'),
         ('school', 'PB'),
         ('year', 'PY'),
-        ],
+    ],
     misc=[
         ('author', 'AU'),
         ('title', 'TI'),
         ('howpublished', 'HP'),
         ('year', 'PY'),
-        ],
+    ],
     techreport=[
         ('author', 'AU'),
         ('title', 'TI'),
         ('institution', 'PB'),
         ('year', 'PY'),
-        ],
-    )
+    ],
+)
 
 for key, value in types.items():
     value.extend([
@@ -475,7 +475,7 @@ for key, value in types.items():
         ('doi', 'DO'),
         ('archiveprefix', 'AP'),
         ('eprint', 'AR'),
-        ])
+    ])
 
 search_keys = set(ris_key
     for value in types.values()
@@ -910,7 +910,7 @@ def read(ris, sup=r'\textsuperscript{X}', sub=r'\textsubscript{X}',
         parseInt(entry.get('VL', '')),
         parseInt(entry.get('SP', '')),
         entry.get('TI', ''),
-        ))
+    ))
 
     # Add suffices non-unique identifiers:
 
