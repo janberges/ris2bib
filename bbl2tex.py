@@ -5,7 +5,7 @@ from ris2bib import __version__
 import re
 import sys
 
-def bbl2tex(s):
+def bbl2tex(s, serialcomma=False):
     arg = r' *(<#\d+>|\d| \S)'
 
     for s in re.findall(r'\\BibitemOpen(.+?)\\BibitemShut', s, re.DOTALL)[1:]:
@@ -37,24 +37,35 @@ def bbl2tex(s):
         for n, group in reversed(list(enumerate(groups, 1))):
             s = s.replace('<#%d>' % n, group)
 
+        if serialcomma:
+            s = re.sub(r',\\ +and\\ +', r'\\serial, ', s)
+
         s = re.sub(r'\\ ', r' ', s)
 
         yield s
 
 def main():
-    bbl, tex = sys.argv[1:]
+    bbl, tex = [arg for arg in sys.argv[1:] if not arg.startswith('-')]
+
+    serialcomma = '--serialcomma' in sys.argv[1:]
 
     with open(bbl) as infile:
         s = infile.read()
 
     outfile = open(tex, 'w')
     outfile.write(r'''\documentclass{article}
-\usepackage[colorlinks]{hyperref}
+\usepackage[colorlinks]{hyperref}''')
+
+    if serialcomma:
+        outfile.write(r'''
+\def\serial,{, and}''')
+
+    outfile.write(r'''
 \begin{document}
 \begin{itemize}
 ''')
 
-    for s in bbl2tex(s):
+    for s in bbl2tex(s, serialcomma):
         outfile.write('    \\item %s\n' % s.strip())
 
     outfile.write(r'''\end{itemize}
