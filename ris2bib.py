@@ -738,8 +738,8 @@ def read(ris, sup=r'\textsuperscript{X}', sub=r'\textsubscript{X}',
 
                     if 'AR' not in entry and 'arxiv' in value.lower():
                         entry['AP'] = 'arXiv'
-                        entry['AR'] = re.search('(abs|pdf)/(.+?)(.pdf|$)',
-                            value).group(2)
+                        entry['AR'] = re.search(
+                            r'(abs|pdf)/(.+?)(v\d+)?(.pdf|$)', value).group(2)
 
                     if 'DO' not in entry and 'doi.org' in value.lower():
                         entry['DO'] = re.search(r'doi\.org/(.+?)/?$',
