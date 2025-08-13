@@ -334,6 +334,7 @@ names = {
     'Coulomb',
     'Dirac',
     'Eliashberg',
+    'Emery',
     'Ernzerhof',
     'Fermi',
     'Feynman',
