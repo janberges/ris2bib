@@ -324,6 +324,7 @@ others = {
 
 names = {
     'Bethe',
+    'Boltzmann',
     'Born',
     'Bose',
     'Brillouin',
