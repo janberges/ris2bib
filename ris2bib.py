@@ -921,13 +921,12 @@ def read(ris, sup=r'\textsuperscript{X}', sub=r'\textsubscript{X}',
         labels = [''] + list(labels[1:])
 
     n = 0
-    while n < len(entries):
-        n0 = n
-        while n < len(entries) and entries[n]['ID'] == entries[n0]['ID']:
-            n += 1
+    for n0 in range(len(entries)):
+        duplicates = [entries[n] for n in range(n0, len(entries))
+            if entries[n]['ID'] == entries[n0]['ID']]
 
-        if len(entries[n0:n]) > 1:
-            for label, entry in zip(labels, entries[n0:n]):
+        if len(duplicates) > 1:
+            for label, entry in zip(labels, duplicates):
                 entry['ID'] += label
 
                 print('Sublabel: %s' % entry['ID'])
