@@ -918,7 +918,7 @@ def read(ris, sup=r'\textsuperscript{X}', sub=r'\textsubscript{X}',
     labels = 'abcdefghijklmnopqrstuvwxyz'
 
     if skip_a:
-        labels = [''] + [label for label in labels[1:]]
+        labels = [''] + list(labels[1:])
 
     n = 0
     while n < len(entries):
