@@ -339,6 +339,7 @@ names = {
     'Fermi',
     'Feynman',
     'Fock',
+    'Fortran',
     'Fr\u00f6hlich',
     'Gauss',
     'Goldstone',
