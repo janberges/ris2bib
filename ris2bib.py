@@ -124,8 +124,14 @@ def keyword_arguments():
 
 accents = {
     '\u00c1': r"\'A",
+    '\u00c4': r'\"{A}',
+    '\u00c9': r"\'E",
+    '\u00cb': r'\"E',
     '\u00cd': r"\'I",
+    '\u00cf': r'\"I',
+    '\u00d3': r"\'O",
     '\u00d6': r'\"{O}',
+    '\u00da': r"\'U",
     '\u00dc': r'\"{U}',
     '\u00df': r'{\ss}',
     '\u00e0': r'\`a',
@@ -135,6 +141,7 @@ accents = {
     '\u00e7': r'\c{c}',
     '\u00e8': r'\`e',
     '\u00e9': r"\'e",
+    '\u00eb': r'\"e',
     '\u00ed': r"\'i",
     '\u00ef': r'\"i',
     '\u00f1': r'\~n',
