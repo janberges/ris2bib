@@ -366,6 +366,7 @@ names = {
     'Kasuya',
     'Kittel',
     'Kohn',
+    'Landau',
     'Lifshitz',
     'Luttinger',
     'Matsubara',
