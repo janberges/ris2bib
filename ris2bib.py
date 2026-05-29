@@ -349,7 +349,7 @@ names = {
     'Fock',
     'Fortran',
     'Fr\u00f6hlich',
-    'Galile',# -i, -an
+    'Galile', # -i, -an
     'Gauss',
     'Goldstone',
     'Green',
