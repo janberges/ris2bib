@@ -607,6 +607,12 @@ def protect(s):
 
         print('Math: %s = %s' % (replacement, group))
 
+    # Substitute closing HTML tags to avoid splitting them at slash below:
+
+    for group in re.findall(r'<\/\w+>', s):
+        groups.append(group)
+        s = s.replace(group, '<#%d>' % len(groups))
+
     # Split string into tokens:
 
     separator = r' \-.:,;()\[\]/' + ''.join(spaces) + ''.join(dashes)
@@ -644,6 +650,13 @@ def escape(s, sup=r'\textsuperscript{X}', sub=r'\textsubscript{X}'):
     s = re.sub(superscripts_range, sup, s)
     s = re.sub(subscripts_range, sub, s)
     s = re.sub(math_range, r'$\1$', s)
+
+    # Also take care of HTML here:
+
+    s = re.sub(r'<sub>\$([^$]+?)\$</sub>', r'$_{\1}$', s)
+    s = re.sub(r'<sup>\$([^$]+?)\$</sup>', r'$^{\1}$', s)
+    s = re.sub('<sub>(.+?)</sub>', sub, s)
+    s = re.sub('<sup>(.+?)</sup>', sup, s)
 
     # Replace certain Unicode characters by LaTeX commands:
 
