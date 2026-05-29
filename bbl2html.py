@@ -48,7 +48,8 @@ def bbl2html(s, md=False):
                 groups[n])
             groups[n] = re.sub(r'\$^' + arg + r'\$', r'<sup>\1</sup>',
                 groups[n])
-            groups[n] = re.sub(r'\\(pm|mp)', r'&\1;', groups[n])
+            groups[n] = re.sub(r'\\(alpha|beta|gamma|delta|pm|mp)', r'&\1;',
+                groups[n])
             groups[n] = re.sub(r'\\allowbreak' + noarg, r'&#x200B;', groups[n])
             groups[n] = re.sub(r'\\@' + noarg, r'', groups[n])
 
