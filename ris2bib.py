@@ -268,6 +268,7 @@ subscripts_any = ''.join(subscripts.keys())
 subscripts_range = '([{0}]+([{0}.,]+[{0}])?)'.format(subscripts_any)
 
 math = {
+    '\u00b1': r'\pm',
     '\u00d7': r'\times',
     '\u0393': r'\Gamma',
     '\u0394': r'\Delta',
@@ -313,6 +314,7 @@ math = {
     '\u2033': r"''",
     '\u2202': r'\partial',
     '\u2212': r'-',
+    '\u2213': r'\mp',
     '\u221a': r'\sqrt',
     '\u221e': r'\infty',
     '\u223c': r'\sim',
