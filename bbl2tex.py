@@ -7,6 +7,7 @@ import sys
 
 def bbl2tex(s, serialcomma=False):
     arg = r' *(<#\d+>|\d| \S)'
+    argg = r' *(<#\d+>)'
 
     for s in re.findall(r'\\BibitemOpen(.+?)\\BibitemShut', s, re.DOTALL)[1:]:
         s = re.sub(r'\n', r' ', s)
@@ -31,6 +32,9 @@ def bbl2tex(s, serialcomma=False):
             groups[n] = re.sub(r'\\(emph|textbf|textsc)' + arg, r'\\\1{\2}',
                 groups[n])
             groups[n] = re.sub(r'\\natexlab' + arg, '', groups[n])
+            groups[n] = re.sub(r'(_|\^)' + argg, r'\1{\2}', groups[n])
+            groups[n] = re.sub(r'\\(textsubscript|textsuperscript)' + argg,
+                r'\\1{\2}', groups[n])
 
         s = groups[-1]
 
