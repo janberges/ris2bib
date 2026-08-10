@@ -798,7 +798,8 @@ def read(ris, sup=r'\textsuperscript{X}', sub=r'\textsubscript{X}',
                 entry['TI'] = protect(entry['TI'])
 
                 if colcap:
-                    entry['TI'] = re.sub(r'(: [^A-Z0-9\s]*?[a-z])',
+                    entry['TI'] = re.sub(
+                        r': [^A-Z0-9\s]*?[a-z](?=[^A-Z0-9]*?(\s|$))',
                         lambda x: x.group().upper(), entry['TI'])
 
                 # Remove special spaces from authors and editors:
