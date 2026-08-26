@@ -510,6 +510,10 @@ def simplify(name):
     for a, b in simplifications.items():
         name = name.replace(a, b)
 
+    # Remove initials:
+
+    name = re.sub(r'\b[A-Z]\.', '', name)
+
     # Keep only ASCII alphanumericals:
 
     name = ''.join([c for c in name
@@ -753,8 +757,15 @@ def read(ris, sup=r'\textsuperscript{X}', sub=r'\textsubscript{X}',
                     elif value == 'RPRT':
                         entry['TY'] = 'techreport'
 
-                if key in {'AU', 'A2'} and key in entry:
-                    entry[key] += ' and ' + value
+                if key in {'AU', 'A2'}:
+                    if re.match(r'([A-Z]\b.? *)+,', value):
+                        value = '{%s %s}' % tuple(reversed(re.split(' *, *',
+                            value, 1)))
+
+                    if key in entry:
+                        entry[key] += ' and ' + value
+                    else:
+                        entry[key] = value
 
                 elif key == 'UR' or re.match(r'L\d', key):
                     if key == 'UR':
@@ -785,8 +796,8 @@ def read(ris, sup=r'\textsuperscript{X}', sub=r'\textsubscript{X}',
             if entry:
                 # Generate entry identifier from first author and year:
 
-                entry['ID'] = entry.get('AU', 'Unknown').split(',', 1)[0]
-                entry['ID'] = simplify(entry['ID'])
+                entry['ID'] = simplify(entry.get('AU',
+                    'Unknown').split(' and ')[0].split(',', 1)[0])
 
                 if short_year:
                     entry['ID'] += entry.get('PY', 'XX')[-2:]
